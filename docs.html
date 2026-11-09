@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>接入文档 · 二要素 / 三要素实名核验 API</title>
+<meta name="description" content="实名核验 API 接入文档：二要素、三要素两套接口，鉴权、请求与返回、错误处理、并发限流、数据处理说明。">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div style="background:#fff3cd;border-bottom:1px solid #f0d98c;padding:8px 16px;font:14px/1.5 -apple-system,sans-serif;color:#7a5b00;text-align:center">内部预览版 · 未正式上线 · 请勿外传</div>
+
+<header class="topbar">
+  <a class="brand" href="index.html">实名核验 API<span>接入文档</span></a>
+  <nav class="topnav">
+    <a href="index.html">首页</a>
+    <a href="pricing.html">价格</a>
+    <a href="docs.html" class="active">文档</a>
+    <a href="compliance.html">合规</a>
+    <a href="faq.html">问答</a>
+    <a href="trial.html" class="cta">申请试用</a>
+  </nav>
+</header>
+
+<div class="wrap">
+<div class="layout">
+
+<article>
+
+  <h1>接入文档</h1>
+  <p class="lead">两个产品：<strong>二要素</strong>核姓名 + 身份证号，<strong>三要素</strong>再加手机号。两套接口的鉴权、错误处理、限流规则一致，只有请求字段不同。</p>
+
+  <div class="notice">
+    <p><strong>关于参数细节：</strong>接口域名、签名算法、字段名与业务码值以开通时下发的<strong>正式接口文档</strong>为准。本文给出接入结构与排障方法，示例中的姓名、证件号、手机号均为脱敏虚构数据。</p>
+  </div>
+
+  <p><a href="quickstart.html">不想看长文？直接走 30 分钟快速开始 →</a></p>
+
+  <!-- ================= 1 ================= -->
+  <h2 id="capability">1. 两个产品与边界</h2>
+
+  <div class="tbl">
+  <table>
+    <tr><th>产品</th><th>核验字段</th><th>适合场景</th><th>返回</th></tr>
+    <tr><td>二要素</td><td>姓名 + 身份证号</td><td>注册、入驻、活动防刷</td><td>一致 / 不一致 / 查无记录</td></tr>
+    <tr><td>三要素</td><td>姓名 + 身份证号 + 手机号</td><td>下单、提现、开卡</td><td>一致 / 不一致 / 查无记录</td></tr>
+  </table>
+  </div>
+
+  <h3>本接口不提供</h3>
+  <ul>
+    <li>身份证归属地、生日等衍生信息，或"是否为本人持证"的担保；</li>
+    <li>三要素以外的核验能力（如证件照片识别），这类需求由客户自有产品解决；</li>
+    <li>100% 覆盖承诺——号码状态变化、库更新延迟都可能导致"查无记录"。</li>
+  </ul>
+
+  <p>核验结果仅用于客户自身业务的身份一致性判断，不具备司法鉴定效力，不能替代公安机关出具的证明文件，不得转售或二次分发。</p>
+
+  <!-- ================= 2 ================= -->
+  <h2 id="flow">2. 接入流程</h2>
+
+  <ol class="steps">
+    <li><b>领免费额度</b>注册后自动发放：二要素 100 条、三要素 50 条，7 天有效。</li>
+    <li><b>下载示例</b>Python / Node / curl 三份，按快速开始跑通。</li>
+    <li><b>试跑</b>用脱敏数据核验一笔，确认返回结构与码值。</li>
+    <li><b>买资源包</b>按用量选包，在线支付或对公转账，款到开额度。</li>
+    <li><b>上线</b>换生产 Key，配置超时、退避、余额告警。</li>
+  </ol>
+
+  <!-- ================= 3 ================= -->
+  <h2 id="auth">3. 鉴权与密钥</h2>
+
+  <p>两套接口共用同一套鉴权：<strong>AppID + AppSecret 签名</strong>。每个请求携带应用标识、时间戳、随机串与签名，服务端用密钥复算签名后校验。签名算法、待签字符串规则、时间戳窗口以正式文档为准。</p>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>密钥安全</h3>
+      <ul>
+        <li>AppSecret 只放服务端，<strong>不得写进前端、App 包或代码仓库</strong>；</li>
+        <li>用环境变量或配置中心注入；</li>
+        <li>测试与生产密钥分开，上线前更换；</li>
+        <li>发现泄露立即轮换。</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>防重放</h3>
+      <ul>
+        <li>每次请求生成新的随机串（nonce）；</li>
+        <li>时间戳偏差不要超过允许窗口；</li>
+        <li>同一业务单号幂等，重试不重复计费。</li>
+      </ul>
+    </div>
+  </div>
+
+  <p>签名逻辑示意（<span class="muted">仅演示结构，真实规则以正式文档为准</span>）：</p>
+
+<pre><code><span class="cmt"># Python 示意：参数排序拼接后做摘要</span>
+import hashlib, hmac, time, uuid
+
+def build_sign(params: dict, secret: str) -&gt; str:
+    items = sorted((k, str(v)) for k, v in params.items()
+                   if k != "sign" and v != "")
+    raw = "&amp;".join(f"{k}={v}" for k, v in items)
+    return hmac.new(secret.encode(), raw.encode(),
+                    hashlib.sha256).hexdigest()
+
+params = {
+    "app_id":    "app_xxxxx",
+    "timestamp": str(int(time.time())),
+    "nonce":     uuid.uuid4().hex[:16],
+    "order_no":  "c_20261109_0001",
+    "name":      "张*",                  <span class="cmt"># 示例为脱敏数据</span>
+    "idcard":    "110101********1234",
+}
+params["sign"] = build_sign(params, "YOUR_APP_SECRET")</code></pre>
+
+  <!-- ================= 4 ================= -->
+  <h2 id="er">4. 二要素：请求与返回</h2>
+
+  <p>只传姓名与证件号，不传手机号。</p>
+
+  <div class="tbl">
+  <table>
+    <tr><th>字段</th><th>说明</th><th>注意</th></tr>
+    <tr><td><code>app_id</code></td><td>应用标识</td><td>测试/生产分开</td></tr>
+    <tr><td><code>name</code></td><td>姓名</td><td>UTF-8，去首尾空格</td></tr>
+    <tr><td><code>idcard</code></td><td>18 位身份证号</td><td>末位 X 统一大小写</td></tr>
+    <tr><td><code>order_no</code></td><td>客户侧业务单号</td><td>唯一，用于幂等与对账</td></tr>
+    <tr><td><code>timestamp</code> / <code>nonce</code> / <code>sign</code></td><td>签名三件套</td><td>规则见正式文档</td></tr>
+  </table>
+  </div>
+
+<pre><code>{
+  "app_id": "app_xxxxx",
+  "order_no": "c_20261109_0001",
+  "name": "张*",
+  "idcard": "110101********1234",
+  "timestamp": 1762646400,
+  "nonce": "a1b2c3d4e5f6",
+  "sign": "【按正式文档计算】"
+}</code></pre>
+
+  <!-- ================= 5 ================= -->
+  <h2 id="sr">5. 三要素：请求与返回</h2>
+
+  <p>在二要素基础上增加 <code>mobile</code>，其余字段一致。</p>
+
+<pre><code>{
+  "app_id": "app_xxxxx",
+  "order_no": "c_20261109_0002",
+  "name": "张*",
+  "idcard": "110101********1234",
+  "mobile": "138****5678",
+  "timestamp": 1762646400,
+  "nonce": "a1b2c3d4e5f6",
+  "sign": "【按正式文档计算】"
+}</code></pre>
+
+  <h3>两套接口共用的返回结构</h3>
+
+<pre><code>{
+  "code": "0",
+  "msg": "success",
+  "request_id": "req_...",
+  "order_no": "c_20261109_0001",
+  "result": 1,
+  "result_desc": "一致"
+}</code></pre>
+
+  <p><code>result</code> 枚举（1 一致 / 2 不一致 / 3 查无记录）以正式文档为准。<strong><code>request_id</code> 必须落日志</strong>，排障和账单争议都靠它定位。</p>
+
+  <!-- ================= 6 ================= -->
+  <h2 id="errors">6. 错误处理</h2>
+
+  <p>错误分六类，处理策略不同：</p>
+
+  <div class="tbl">
+  <table>
+    <tr><th>类别</th><th>典型表现</th><th>是否计费</th><th>处理</th></tr>
+    <tr><td>参数类</td><td>缺字段、格式错、编码问题</td><td>否</td><td>修正后重试，不要盲目重试</td></tr>
+    <tr><td>鉴权类</td><td>签名错、时间戳过期、密钥停用</td><td>否</td><td>核对密钥与拼接规则，不重试</td></tr>
+    <tr><td>权限与余额</td><td>无权限、余额不足、应用停用</td><td>否</td><td>联系我方，不重试</td></tr>
+    <tr><td>限流</td><td>超出并发或日调用上限</td><td>视规则</td><td>指数退避后重试</td></tr>
+    <tr><td>上游异常</td><td>超时、系统错误</td><td>视规则</td><td>幂等重试 1–2 次，仍失败转人工</td></tr>
+    <tr><td>核验结果类</td><td>不一致、查无记录</td><td>是</td><td>按业务规则处理，不重试</td></tr>
+  </table>
+  </div>
+
+  <h3>排查顺序</h3>
+  <ol>
+    <li>取 <code>request_id</code> 和错误码，先判断请求是否到达我方；</li>
+    <li>参数类：核对字段名、必填、长度（证件 18 位、手机 11 位）、有无全角字符；</li>
+    <li>鉴权类：核对待签串顺序、是否漏了空值参数、密钥是否用错环境；</li>
+    <li>超时类：先查幂等结果，确认没成功再重试；</li>
+    <li>结果异常（该一致却不一致）：确认用户输入有无空格、曾用名、生僻字。</li>
+  </ol>
+
+  <p>重试只对<strong>超时、5xx、限流</strong>做，指数退避 1s / 2s / 4s，最多 3 次，必须带同一个 <code>order_no</code>。</p>
+
+  <!-- ================= 7 ================= -->
+  <h2 id="limit">7. 并发与限流</h2>
+
+  <p>并发与限流能力由上游（腾讯云）保障，我方负责按你的业务量申请额度并协助压测。每个应用有默认并发与日调用上限，开通时确认。</p>
+
+  <h3>怎么申请提额</h3>
+  <ol>
+    <li>提前 <strong>3 个工作日</strong>联系对接人，说明峰值 QPS、时段、持续时长；</li>
+    <li>我方提交上游评估，按结果调整该应用的并发与日上限；</li>
+    <li>生效后按新额度压测（80% 目标压 10 分钟），确认超时率正常再放量；</li>
+    <li>临时活动可申请短期提额，结束后自动回落。</li>
+  </ol>
+
+  <p>客户端建议：本地令牌桶按签约上限的 80% 跑；批量场景串行化；错误率超 20% 熔断 30 秒。</p>
+
+  <!-- ================= 8 ================= -->
+  <h2 id="privacy">8. 数据处理</h2>
+
+  <ul>
+    <li><strong>只传必需字段</strong>：二要素传姓名、证件号；三要素多传手机号。不附加地址、单位、照片；</li>
+    <li><strong>不留存明文</strong>：我方通道不做业务留存，只保留不含明文身份信息的调用日志；</li>
+    <li><strong>日志脱敏</strong>：客户侧证件号中间 8 位、手机号中间 4 位打码；</li>
+    <li><strong>全链路 HTTPS</strong>，不通过明文 HTTP、短信或聊天工具传身份信息；</li>
+    <li><strong>不得二次利用</strong>：结果只用于身份核验，不做画像、营销或对外提供。</li>
+  </ul>
+
+  <p>客户须在自身隐私政策中告知用户并取得同意。详见 <a href="compliance.html">合规说明</a>。</p>
+
+  <!-- ================= 9 ================= -->
+  <h2 id="faq">9. 常见问题</h2>
+
+  <h3>二要素和三要素能同时用吗？</h3>
+  <p>能。两个产品独立计费、独立余额，同一账号可以分别购买。</p>
+
+  <h3>为什么有的身份证返回"查无记录"？</h3>
+  <p>可能是号码新办未入库、异地数据延迟，或用户输入有误。这类结果<strong>不应直接判拒</strong>，建议转人工。</p>
+
+  <h3>支持批量吗？</h3>
+  <p>以正式文档为准。若无批量接口，客户端串行调用并控制并发。</p>
+
+  <h3>结果可以缓存吗？</h3>
+  <p>缓存时长以合同约定为准。建议只缓存结论与时间，不缓存明文；号码或姓名变更后必须重新核验。</p>
+
+  <h3>密钥泄露了怎么办？</h3>
+  <p>立即联系对接人轮换，并检查异常调用。轮换期间新旧密钥可并行一小段时间。</p>
+
+  <!-- ================= 10 ================= -->
+  <h2 id="apply">10. 申请试用</h2>
+
+  <p>提交 <a href="trial.html">在线试用申请</a>，或直接注册领免费额度：二要素 100 条、三要素 50 条，各限 1 次。</p>
+
+  <h2 id="changelog">11. 版本记录</h2>
+  <div class="tbl">
+  <table>
+    <tr><th>版本</th><th>日期</th><th>说明</th></tr>
+    <tr><td>v0.2</td><td>2026-11-09</td><td>拆成二要素 / 三要素两套接口说明；补免费额度与提额路径。</td></tr>
+    <tr><td>v0.1</td><td>2026-11-09</td><td>首版接入说明。</td></tr>
+  </table>
+  </div>
+
+</article>
+
+<aside class="toc">
+  <div class="toc-title">目录</div>
+  <a href="#capability">1. 两个产品与边界</a>
+  <a href="#flow">2. 接入流程</a>
+  <a href="#auth">3. 鉴权与密钥</a>
+  <a href="#er">4. 二要素请求与返回</a>
+  <a href="#sr">5. 三要素请求与返回</a>
+  <a href="#errors">6. 错误处理</a>
+  <a href="#limit">7. 并发与限流</a>
+  <a href="#privacy">8. 数据处理</a>
+  <a href="#faq">9. 常见问题</a>
+  <a href="#apply">10. 申请试用</a>
+</aside>
+
+</div>
+</div>
+
+<footer>
+  <div class="wrap">
+    本服务为经授权的实名核验通道，结果仅用于身份一致性核验。腾讯云提供准确性证明。<br>
+    文档中的示例数据均为脱敏虚构；接口细节以开通时下发的正式文档为准。
+    <br>运营主体：【待填：公司全称】　ICP 备案号：【待填：备案号】
+  </div>
+</footer>
+
+</body>
+</html>

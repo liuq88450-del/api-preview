@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>申请免费试用 · 实名核验 API</title>
+<meta name="description" content="免费试用二要素 100 条、三要素 50 条，7 天有效。提交企业信息，30 分钟跑通第一笔核验。">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div style="background:#fff3cd;border-bottom:1px solid #f0d98c;padding:8px 16px;font:14px/1.5 -apple-system,sans-serif;color:#7a5b00;text-align:center">内部预览版 · 未正式上线 · 请勿外传</div>
+
+<header class="topbar">
+  <a class="brand" href="index.html">实名核验 API<span>申请试用</span></a>
+  <nav class="topnav">
+    <a href="index.html">首页</a>
+    <a href="pricing.html">价格</a>
+    <a href="docs.html">文档</a>
+    <a href="compliance.html">合规</a>
+    <a href="faq.html">问答</a>
+    <a href="trial.html" class="cta">申请试用</a>
+  </nav>
+</header>
+
+<div class="wrap">
+  <h1 style="margin-top:8px">申请免费试用</h1>
+  <p class="lead">二要素 100 条、三要素 50 条，每个账号各限 1 次，7 天有效。不用先付款，30 分钟跑通第一笔。</p>
+
+  <div class="flow" style="margin:28px 0 40px">
+    <div class="step"><b>1. 提交信息</b><span>公司/个人、用途、想试哪个产品。</span></div>
+    <div class="step"><b>2. 发放额度</b><span>系统自动发放，邮件发测试 Key。</span></div>
+    <div class="step"><b>3. 30 分钟跑通</b><span>下载示例、填 Key、发请求。</span></div>
+    <div class="step"><b>4. 买包上线</b><span>按量选资源包，款到开额度。</span></div>
+  </div>
+
+  <h2 style="margin-top:0">填写申请</h2>
+  <p class="section-sub">带 <span style="color:#dc2626">*</span> 为必填。我们只收集联系信息，不收集任何终端用户的身份数据。</p>
+
+  <form class="form" id="trial-form" novalidate>
+    <div class="field">
+      <label for="company">公司 / 团队名称 <span style="color:#dc2626">*</span></label>
+      <input id="company" name="company" type="text" required placeholder="营业执照全称或团队名">
+    </div>
+    <div class="field">
+      <label for="credit">统一社会信用代码</label>
+      <input id="credit" name="credit" type="text" placeholder="选填，企业客户填写">
+    </div>
+    <div class="field">
+      <label for="contact">联系人 <span style="color:#dc2626">*</span></label>
+      <input id="contact" name="contact" type="text" required placeholder="姓名">
+    </div>
+    <div class="field">
+      <label for="phone">手机号 <span style="color:#dc2626">*</span></label>
+      <input id="phone" name="phone" type="tel" required placeholder="用于发放额度与沟通">
+    </div>
+    <div class="field">
+      <label for="email">邮箱 <span style="color:#dc2626">*</span></label>
+      <input id="email" name="email" type="email" required placeholder="接收测试 Key">
+    </div>
+    <div class="field">
+      <label for="biz">业务类型 <span style="color:#dc2626">*</span></label>
+      <select id="biz" name="biz" required>
+        <option value="">请选择</option>
+        <option>小程序 / 外包工作室</option>
+        <option>小 SaaS / 工具站</option>
+        <option>电商 / 租赁 / 家政</option>
+        <option>独立开发者</option>
+        <option>其它</option>
+      </select>
+    </div>
+    <div class="field full">
+      <label>想试哪个产品 <span style="color:#dc2626">*</span></label>
+      <div class="radio-row">
+        <label><input type="checkbox" name="product" value="二要素（100 条）"> 二要素 100 条</label>
+        <label><input type="checkbox" name="product" value="三要素（50 条）"> 三要素 50 条</label>
+      </div>
+      <span class="form-hint">可以两个都选，各限领 1 次。</span>
+    </div>
+    <div class="field full">
+      <label for="scene">使用场景 <span style="color:#dc2626">*</span></label>
+      <textarea id="scene" name="scene" required placeholder="例：小程序注册时核验姓名和身份证；用在哪个环节；预计每天多少条"></textarea>
+    </div>
+    <div class="field full">
+      <label class="check-row">
+        <input type="checkbox" id="agree" required>
+        <span>我已阅读 <a href="compliance.html" target="_blank">合规说明</a>，承诺核验仅用于本公司自身业务，不转售、不用于催收、放贷、赌博、人肉搜索等场景。</span>
+      </label>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-primary" type="submit">提交并领取额度</button>
+      <span class="form-status" id="form-status"></span>
+    </div>
+  </form>
+
+  <h2>免费额度规则（防滥用）</h2>
+  <p>额度是给真实业务验证用的，规则写清楚，避免大家都不够用。</p>
+  <div class="tbl">
+  <table>
+    <tr><th>规则</th><th>内容</th></tr>
+    <tr><td>一码一账号</td><td>同一手机号、同一统一社会信用代码、同一邮箱域名，任一已领过即不再发放；同一企业只发一次。</td></tr>
+    <tr><td>限时限额</td><td>7 天有效；二要素每天最多 50 条、三要素每天最多 20 条；不可叠加、不可转移、到期清零。</td></tr>
+    <tr><td>风险识别</td><td>同一 IP 24 小时内注册 ≥3 个试用账号转人工审核；请求间隔机械或命中黑名单号段自动冻结。</td></tr>
+  </table>
+  </div>
+
+  <h2>试用满意后怎么买</h2>
+  <div class="tbl">
+  <table>
+    <tr><th>产品</th><th>资源包</th><th>售价</th></tr>
+    <tr><td>二要素</td><td>5,000 条 / 20,000 条 / 100,000 条</td><td>140 / 540 / 2,600 元</td></tr>
+    <tr><td>三要素</td><td>1,000 条 / 5,000 条 / 20,000 条</td><td>230 / 1,150 / 4,500 元</td></tr>
+  </table>
+  </div>
+  <p>资源包有效期 1 年，用完可叠加；余额不足提前 7 天短信 + 邮件提醒。</p>
+
+  <div class="notice">
+    <p><strong>关于密钥：</strong>测试 Key 发到注册邮箱，不走微信群。Key 只放服务端，不要写进前端或代码仓库。</p>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    本服务为经授权的实名核验通道，结果仅用于身份一致性核验。腾讯云提供准确性证明。<br>
+    我们仅将申请信息用于联系与资质审核，不对外提供。
+    <br>运营主体：【待填：公司全称】　ICP 备案号：【待填：备案号】
+  </div>
+</footer>
+
+<script>
+(function () {
+  // 上线前替换为真实销售邮箱
+  var SALES_EMAIL = "sales@example.com";
+
+  var form = document.getElementById("trial-form");
+  var status = document.getElementById("form-status");
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    var products = Array.prototype.map.call(
+      form.querySelectorAll('input[name="product"]:checked'),
+      function (el) { return el.value; }
+    );
+
+    if (!products.length) {
+      status.textContent = "请至少选择一个想试的产品。";
+      status.style.color = "#dc2626";
+      return;
+    }
+
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    var get = function (id) { return (document.getElementById(id).value || "").trim(); };
+
+    var lines = [
+      "公司/团队：" + get("company"),
+      "统一社会信用代码：" + (get("credit") || "未填"),
+      "联系人：" + get("contact"),
+      "手机号：" + get("phone"),
+      "邮箱：" + get("email"),
+      "业务类型：" + get("biz"),
+      "试用产品：" + products.join("、"),
+      "",
+      "使用场景：",
+      get("scene")
+    ];
+
+    var subject = "免费试用申请 - " + get("company");
+    var body = lines.join("\n");
+    window.location.href = "mailto:" + SALES_EMAIL +
+      "?subject=" + encodeURIComponent(subject) +
+      "&body=" + encodeURIComponent(body);
+
+    status.style.color = "#15803d";
+    status.textContent = "已生成邮件，请在邮件客户端中发送；若未自动打开，请复制内容发至 " + SALES_EMAIL;
+  });
+})();
+</script>
+
+</body>
+</html>
