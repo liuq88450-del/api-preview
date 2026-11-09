@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>核验不通过的常见原因 · 实名核验 API</title>
+<meta name="description" content="实名核验不通过的常见原因：信息填错、数据源延迟、特殊人群、通道差异。附自查步骤与客服话术。">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div style="background:#fff3cd;border-bottom:1px solid #f0d98c;padding:8px 16px;font:14px/1.5 -apple-system,sans-serif;color:#7a5b00;text-align:center">内部预览版 · 未正式上线 · 请勿外传</div>
+
+<header class="topbar">
+  <a class="brand" href="index.html">实名核验 API<span>核验不通过的原因</span></a>
+  <nav class="topnav">
+    <a href="index.html">首页</a>
+    <a href="pricing.html">价格</a>
+    <a href="docs.html">文档</a>
+    <a href="compliance.html">合规</a>
+    <a href="faq.html">问答</a>
+    <a href="trial.html" class="cta">申请试用</a>
+  </nav>
+</header>
+
+<div class="wrap">
+<article style="max-width:820px">
+
+  <h1>核验不通过的常见原因</h1>
+  <p class="lead">客户投诉里，九成不是"接口坏了"，而是不知道为什么没过。这一页把常见原因、判断方法、给用户的建议讲清楚。</p>
+
+  <div class="notice warn">
+    <p><strong>先说口径：</strong>我们不承诺准确率，也不承诺通过率。只承诺<strong>服务可用</strong>和<strong>失败不计费</strong>；不同数据源覆盖范围不同，同一人在不同时间、不同通道的结果可能不一致。以下为市场常见情况，具体以实际核验结果为准。</p>
+  </div>
+
+  <h2 id="how">先看接口返回了什么</h2>
+  <p>失败时先看三个字段，再决定是不是要找客服：</p>
+
+  <div class="tbl">
+  <table>
+    <tr><th>字段</th><th>看什么</th></tr>
+    <tr><td><code>code</code></td><td>大类：<code>NO_MATCH</code> 是"核验完成但不一致"，<code>PARAM_INVALID</code> 是格式问题，<code>QUOTA_EXCEEDED</code> 是余额不足</td></tr>
+    <tr><td><code>reason</code></td><td>机器可读的原因码，见下表</td></tr>
+    <tr><td><code>message</code></td><td>给人看的提示，不含用户输入内容</td></tr>
+  </table>
+  </div>
+
+  <div class="tbl">
+  <table>
+    <tr><th>reason</th><th>含义</th><th>先查什么</th></tr>
+    <tr><td><code>NAME_INVALID</code></td><td>姓名格式不对</td><td>是否为空、超长、含特殊字符</td></tr>
+    <tr><td><code>ID_FORMAT_INVALID</code></td><td>身份证号格式不对</td><td>是否 18 位、末位 X、有无空格</td></tr>
+    <tr><td><code>MOBILE_FORMAT_INVALID</code></td><td>手机号格式不对</td><td>是否 11 位、是否 1 开头</td></tr>
+    <tr><td><code>IMAGE_INVALID</code></td><td>图片不合格</td><td>是否 JPG、5–50KB、Base64 正确</td></tr>
+    <tr><td><code>BODY_INVALID</code></td><td>请求体不是合法 JSON</td><td>Content-Type、JSON 语法</td></tr>
+    <tr><td><code>IDENTITY_NOT_MATCHED</code></td><td>核验完成，但不一致 / 无记录</td><td>看下面四类原因</td></tr>
+  </table>
+  </div>
+
+  <h2 id="type1">1. 信息本身错</h2>
+  <div class="card-soft" style="margin:16px 0">
+    <h3>现象</h3>
+    <p>返回 <code>NO_MATCH</code>；用户坚持"我填的就是对的"；换个手机或重新输入后又能过。</p>
+    <h3>怎么判断</h3>
+    <ul style="margin:0">
+      <li>身份证号逐位核对，重点看末位 X、数字 0/O、1/I 混淆；</li>
+      <li>姓名用字：同音字、生僻字、简体/繁体、曾用名；</li>
+      <li>手机号是否本人实名（运营商 App 可查"一证通查"）；</li>
+      <li>证件是否在有效期内、是否挂失。</li>
+    </ul>
+    <h3>给客户的建议</h3>
+    <p style="margin:0">前端做格式和一致性校验，让用户二次确认；提供"修改后重试"；<strong>不要直接封号或判黑</strong>，先给用户一次纠正机会。</p>
+  </div>
+
+  <h2 id="type2">2. 数据源延迟</h2>
+  <div class="card-soft" style="margin:16px 0">
+    <h3>现象</h3>
+    <p>刚迁户、刚改名、刚补办证件、刚换手机号，核验不通过；隔几天再试，自动好了。</p>
+    <h3>怎么判断</h3>
+    <ul style="margin:0">
+      <li>问用户最近 30 天是否办过户籍、证件、号码变更业务；</li>
+      <li>同一信息隔 3–7 天复测；</li>
+      <li>记录首次失败的时间点，便于判断是否"刚变更"。</li>
+    </ul>
+    <h3>给客户的建议</h3>
+    <p style="margin:0">业务上给"稍后重试"或"人工复核"入口；这类结果不代表身份造假，别当黑名单处理。<strong>市场常见情况，等待时长不确定。</strong></p>
+  </div>
+
+  <h2 id="type3">3. 特殊人群</h2>
+  <div class="card-soft" style="margin:16px 0">
+    <h3>现象</h3>
+    <p>现役军人、武警、特殊部门人员、移民、未换二代证、已故未注销等，可能查无记录或信息不完整。</p>
+    <h3>怎么判断</h3>
+    <ul style="margin:0">
+      <li>用户主动说明身份类型（军人证、护照、境外证件）；</li>
+      <li>证件类型不在居民身份证范围内；</li>
+      <li>户籍状态特殊（注销、迁出、集体户）。</li>
+    </ul>
+    <h3>给客户的建议</h3>
+    <p style="margin:0">转人工或线下材料核验；不要用线上核验作为唯一依据；涉及军人、武警等，按国家相关规定处理。<strong>具体名单与规则以主管部门规定为准，本页只作提示。</strong></p>
+  </div>
+
+  <h2 id="type4">4. 通道差异</h2>
+  <div class="card-soft" style="margin:16px 0">
+    <h3>现象</h3>
+    <p>同一个人，今天过、明天不过；或者在不同服务商那里结果不一样。</p>
+    <h3>怎么判断</h3>
+    <ul style="margin:0">
+      <li>确认两次输入完全一致（姓名、号码、手机号）；</li>
+      <li>记录每次的 <code>request_id</code> 和时间，联系我们对比；</li>
+      <li>区分是"信息变了"还是"通道变了"。</li>
+    </ul>
+    <h3>给客户的建议</h3>
+    <p style="margin:0">单次结果不作为最终结论；重要场景加人工复核；把核验当"风险信号"而不是"判决书"。<strong>不同数据源覆盖范围不同，这是行业常见情况。</strong></p>
+  </div>
+
+  <h2 id="check">5 步自查</h2>
+  <ol>
+    <li>看 <code>code</code> 和 <code>reason</code>，先排除格式和余额问题；</li>
+    <li>核对身份证号、姓名用字、手机号是否本人实名；</li>
+    <li>问用户最近有没有迁户、改名、补证、换号；</li>
+    <li>同一信息隔 3–7 天复测一次；</li>
+    <li>仍不通过，带 <code>request_id</code> + 发生时间 + 脱敏后的输入特征（不要发完整证件号）提工单。</li>
+  </ol>
+
+  <h2 id="script">给客服的三句话</h2>
+  <div class="cards3">
+    <div class="card-soft"><h3>先安抚</h3><p>"核验不通过不等于身份造假，可能是信息没同步或填写有误，我们先帮您核对一下。"</p></div>
+    <div class="card-soft"><h3>给路径</h3><p>"如果是刚办或刚改的信息，建议 3–7 天后重试；着急的话我们走人工复核。"</p></div>
+    <div class="card-soft"><h3>划边界</h3><p>"特殊证件（军人、护照等）可能不在线上核验范围，需要走线下材料。"</p></div>
+  </div>
+
+  <h2 id="promise">我们的承诺与不承诺</h2>
+  <div class="tbl">
+  <table>
+    <tr><th>承诺</th><th>不承诺</th></tr>
+    <tr><td>服务可用性（以 SLA 为准）</td><td>100% 准确率</td></tr>
+    <tr><td>失败请求不计费</td><td>所有人都能通过</td></tr>
+    <tr><td>返回 <code>code</code> / <code>reason</code> 帮助自查</td><td>替客户做身份真伪的法律认定</td></tr>
+    <tr><td>工单 1 小时内响应</td><td>对"查无记录"给出确定结论</td></tr>
+  </table>
+  </div>
+
+  <p style="margin-top:24px">相关：<a href="docs.html#codes">返回码表</a> · <a href="faq.html">常见问答</a> · <a href="service.html">服务与承诺</a></p>
+
+</article>
+</div>
+
+<div class="band cta-band">
+  <h2>还在排查？把 request_id 发我们</h2>
+  <p>不用发证件号，带 request_id 和时间就能定位。</p>
+  <a class="btn btn-primary" href="trial.html">联系我们</a>
+</div>
+
+<footer>
+  <div class="wrap">
+    本服务为经授权的实名核验通道，结果仅用于身份一致性核验。数据来自合法数据源。<br>
+    本页为常见情况说明，不构成对核验结果的保证；具体以实际结果与合同为准。
+        <a href="service.html">服务与承诺</a> · <a href="trust.html">信任与资质</a> · <a href="compliance.html">合规说明</a> · <a href="faq.html">问答</a> · <a href="failure-reasons.html">失败原因</a>
+    <br>运营主体：【待填：公司全称】　ICP 备案号：【待填：备案号】
+  </div>
+</footer>
+
+</body>
+</html>
