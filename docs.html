@@ -186,9 +186,9 @@ curl -s -X POST https://api.example.com/v1/realname \
   <h2 id="privacy">9. 数据处理</h2>
 
   <ul>
-    <li>请求体（姓名、身份证号、照片）<strong>不落库、不写日志</strong>，照片只在内存中处理；</li>
+    <li>请求体（姓名、身份证号、照片）<strong>我方不落库、不写日志</strong>；</li>
     <li>日志只保留 request_id、Key 前缀、端点、我方码、是否计费、耗时；</li>
-    <li>照片只在内存中转发，处理完即丢弃；</li>
+    <li>照片由我方转发给上游核验服务方，我方不留副本；上游侧的存储与留存期限以其政策为准；</li>
     <li>错误信息不含用户输入内容；</li>
     <li>客户须在隐私政策中告知用户并取得同意，详见 <a href="compliance.html">合规说明</a>。</li>
   </ul>
