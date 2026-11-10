@@ -40,19 +40,22 @@ export API_BASE="https://【开通时给的域名】"</code></pre>
 
   <h2 id="step2">2. 发第一笔三要素（2 分钟）</h2>
 
-<pre><code>curl -s -X POST "$API_BASE/v1/id3" \
+<pre><code># 照片先转 Base64，去掉换行和 data: 前缀
+BASE64=$(base64 -i photo.jpg | tr -d '\n')
+
+curl -s -X POST "$API_BASE/v1/realname" \
   -H "X-API-Key: $API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"name":"张*","id_number":"110101********1234","mobile":"138****5678"}'</code></pre>
+  -d "{\"name\":\"张三\",\"id_number\":\"110101199001011234\",\"image_base64\":\"$BASE64\"}"</code></pre>
 
-  <p class="muted" style="font-size:14px;color:var(--ink-2)">注意：示例里的姓名、证件号、手机号是打码的，原样复制会返回 <code>PARAM_INVALID</code>，这是正常的；把这三项换成你自己的测试数据即可复制跑通。</p>
+  <p class="muted" style="font-size:14px;color:var(--ink-2)">注意：示例里的姓名和证件号是虚构的，照片要用你自己的测试图（JPG，5–50KB，Base64 不带前缀）。照片不合格会返回 <code>IMAGE_INVALID</code>，不计费。</p>
 
   <p>成功返回：</p>
 
 <pre><code>{
   "code": "OK",
   "request_id": "r_2f8a1c...",
-  "result": { "match": true, "level": "id3" },
+  "result": { "match": true, "level": "realname" },
   "billed": true
 }</code></pre>
 
@@ -75,8 +78,8 @@ export API_BASE="https://【开通时给的域名】"</code></pre>
   <h2 id="trouble">跑不通？先查四条</h2>
   <ol>
     <li><strong>Key 没生效</strong>：<code>echo $API_KEY</code> 确认；请求头是 <code>X-API-Key</code>，不是 Authorization。</li>
-    <li><strong>路径不对</strong>：只有 <code>/v1/id3</code>，大小写敏感。</li>
-    <li><strong>字段名不对</strong>：<code>id_number</code> 不是 idcard，手机号字段是 <code>mobile</code>。</li>
+    <li><strong>路径不对</strong>：只有 <code>/v1/realname</code>，大小写敏感。</li>
+    <li><strong>字段名不对</strong>：<code>id_number</code> 不是 idcard；照片字段是 <code>image_base64</code>，要的是 Base64 字符串，不是文件路径或 URL。</li>
     
   </ol>
 
