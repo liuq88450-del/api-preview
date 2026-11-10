@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta name="robots" content="noindex,nofollow">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>API 文档 · 实名核验（二要素 / 三要素 / 实人认证）</title>
-<meta name="description" content="实名核验 API 文档：三个端点，X-API-Key 鉴权，JSON 请求与返回，统一返回码。">
+<title>API 文档 · 三要素实名核验</title>
+<meta name="description" content="三要素实名核验 API 文档：一个端点，X-API-Key 鉴权，JSON 请求与返回，统一返回码。">
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
-<div style="background:#fff3cd;border-bottom:1px solid #f0d98c;padding:8px 16px;font:14px/1.5 -apple-system,sans-serif;color:#7a5b00;text-align:center">内部预览版 · 未正式上线 · 请勿外传</div>
 
 <header class="topbar">
   <a class="brand" href="index.html">实名核验 API<span>API 文档</span></a>
@@ -29,7 +27,7 @@
 <article>
 
   <h1>API 文档</h1>
-  <p class="lead">三个端点，一套鉴权、一套返回码：<code>/v1/id2</code>（二要素）、<code>/v1/id3</code>（三要素）、<code>/v1/realname</code>（实人认证）。</p>
+  <p class="lead">一个端点：<code>POST /v1/id3</code>，核验姓名、身份证号、手机号是否属于同一人。一套鉴权、一套返回码。</p>
 
   <div class="notice">
     <p>请求和返回都是 JSON；鉴权只用一个请求头 <code>X-API-Key</code>。不需要签名、不需要拼时间戳。</p>
@@ -43,9 +41,7 @@
   <div class="tbl">
   <table>
     <tr><th>端点</th><th>用途</th><th>必填字段</th></tr>
-    <tr><td><code>POST /v1/id2</code></td><td>二要素核验</td><td>name, id_number</td></tr>
     <tr><td><code>POST /v1/id3</code></td><td>三要素核验</td><td>name, id_number, mobile</td></tr>
-    <tr><td><code>POST /v1/realname</code></td><td>实人认证</td><td>name, id_number, image_base64</td></tr>
   </table>
   </div>
 
@@ -61,28 +57,13 @@
   <!-- 3 -->
   <h2 id="request">3. 请求</h2>
 
-  <h3>3.1 二要素</h3>
+  <h3>3.1 三要素</h3>
 
   <div class="tbl">
   <table>
     <tr><th>字段</th><th>类型</th><th>必填</th><th>说明</th></tr>
     <tr><td><code>name</code></td><td>string</td><td>是</td><td>姓名，1–40 字符</td></tr>
     <tr><td><code>id_number</code></td><td>string</td><td>是</td><td>18 位身份证号，末位可为 X</td></tr>
-  </table>
-  </div>
-
-<pre><code>curl -s -X POST https://api.example.com/v1/id2 \
-  -H "X-API-Key: $API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"name":"张*","id_number":"110101********1234"}'</code></pre>
-
-  <h3>3.2 三要素</h3>
-
-  <div class="tbl">
-  <table>
-    <tr><th>字段</th><th>类型</th><th>必填</th><th>说明</th></tr>
-    <tr><td><code>name</code></td><td>string</td><td>是</td><td>姓名，1–40 字符</td></tr>
-    <tr><td><code>id_number</code></td><td>string</td><td>是</td><td>18 位身份证号</td></tr>
     <tr><td><code>mobile</code></td><td>string</td><td>是</td><td>11 位手机号</td></tr>
   </table>
   </div>
@@ -92,11 +73,9 @@
   -H "Content-Type: application/json" \
   -d '{"name":"张*","id_number":"110101********1234","mobile":"138****5678"}'</code></pre>
 
-  <h3>3.3 实人认证</h3>
-
-  <p>字段见 <a href="docs-ctid.html">实人认证 API</a>：多一个 <code>image_base64</code>（JPG，5–50KB）。</p>
-
   <!-- 4 -->
+  <p class="muted" style="font-size:14px;color:var(--ink-2)">示例里的姓名、证件号、手机号是打码的，直接复制会返回 <code>PARAM_INVALID</code>；换成你自己的测试数据即可跑通。</p>
+
   <h2 id="response">4. 返回</h2>
 
   <p>成功（一致）：</p>
@@ -104,7 +83,7 @@
 <pre><code>{
   "code": "OK",
   "request_id": "r_2f8a1c...",
-  "result": { "match": true, "level": "id2" },
+  "result": { "match": true, "level": "id3" },
   "billed": true
 }</code></pre>
 
@@ -113,7 +92,7 @@
 <pre><code>{
   "code": "NO_MATCH",
   "request_id": "r_2f8a1c...",
-  "result": { "match": false, "level": "id2" },
+  "result": { "match": false, "level": "id3" },
   "billed": true
 }</code></pre>
 
@@ -134,7 +113,7 @@
     <tr><td><code>reason</code></td><td>机器可读原因码（如 ID_FORMAT_INVALID、IDENTITY_NOT_MATCHED），用于自查</td></tr>
     <tr><td><code>request_id</code></td><td>请求唯一号，排障与对账用，请落日志</td></tr>
     <tr><td><code>result.match</code></td><td>是否一致；失败时没有该字段</td></tr>
-    <tr><td><code>result.level</code></td><td>id2 / id3 / realname</td></tr>
+    <tr><td><code>result.level</code></td><td>固定为 id3</td></tr>
     <tr><td><code>billed</code></td><td>本次是否计费</td></tr>
   </table>
   </div>
@@ -169,7 +148,7 @@
   <p>核验数据来自多个合法数据源，不同数据源的覆盖范围不同，同一人在不同时间、不同通道的结果可能不一致。</p>
   <ul>
     <li>我们不承诺 100% 准确率，也不承诺通过率；</li>
-    <li>只承诺服务可用性（以 SLA 为准）与失败请求不计费；</li>
+    <li>只承诺服务可用性（以 SLA 为准）与报错不计费；</li>
     <li>失败时返回 <code>code</code> / <code>reason</code>，帮助客户自查；</li>
     <li>常见不通过原因见 <a href="failure-reasons.html">核验不通过的常见原因</a>。</li>
   </ul>
@@ -221,8 +200,8 @@
   <h3>超时了能重试吗？</h3>
   <p>能，但要带同一个 <code>Idempotency-Key</code>，避免同一笔请求被计费两次。</p>
 
-  <h3>一个 Key 能同时调三个端点吗？</h3>
-  <p>默认可以；如果只买了部分产品，没开通的端点返回 NOT_AUTHORIZED。</p>
+  <h3>一个 Key 能调哪些端点？</h3>
+  <p>只开放三要素 <code>/v1/id3</code>；其它端点不在服务范围。</p>
 
   <h3>为什么核验不通过？</h3>
   <p>常见原因是信息填写、数据源延迟、特殊证件类型、通道覆盖差异。见 <a href="failure-reasons.html">核验不通过的常见原因</a>。</p>
