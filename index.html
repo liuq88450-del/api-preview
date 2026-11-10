@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>三要素实名核验 API · 低至 0.22 元/次</title>
-<meta name="description" content="三要素实名核验 API：姓名+身份证+手机号一次核验，低至 0.22 元/次。免费试用 100 次，报错不计费，30 分钟跑通。">
+<meta name="description" content="三要素实名核验 API：姓名+身份证+人脸照片一次核验，低至 0.22 元/次。免费试用 100 次，报错不计费，30 分钟跑通。">
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
@@ -26,7 +26,7 @@
     <p class="eyebrow">经授权的实名核验通道 · 数据来自合法数据源</p>
     <h1>实名核验 API</h1>
     <p class="hero-price">低至 <strong>0.22</strong> 元/次</p>
-    <p class="hero-sub">姓名 + 身份证号 + 手机号，一次请求判断是否属于同一人。30 分钟跑通，报错不计费。</p>
+    <p class="hero-sub">姓名 + 身份证号 + 人脸照片，一次请求判断是否属于同一人。30 分钟跑通，报错不计费。</p>
     <div class="hero-cta">
       <span class="free-badge">免费试用 100 次</span>
       <a class="btn btn-primary" href="trial.html">立即申请</a>
@@ -43,13 +43,13 @@
 
 <div class="wrap section">
   <h2>只做一件事：三要素核验</h2>
-  <p class="section-sub">姓名 + 身份证号 + 手机号，返回一致 / 不一致 / 查无记录。不做花活，把这一件事做稳。</p>
+  <p class="section-sub">姓名 + 身份证号 + 人脸照片，返回一致 / 不一致 / 查无记录。不做花活，把这一件事做稳。</p>
   <div class="cards2">
     <div class="card-soft">
       <span class="badge">主力产品</span>
-      <h3 style="margin-top:12px">三要素 · 姓名 + 身份证 + 手机号</h3>
+      <h3 style="margin-top:12px">三要素 · 姓名 + 身份证 + 人脸照片</h3>
       <div class="amount" style="font-size:30px;margin:8px 0">0.22–0.25<small> 元/次</small></div>
-      <p>适合下单、提现、开卡、注册。多核一项手机号，风控更严。</p>
+      <p>适合下单、提现、开卡、注册。多核一项人脸，确认是本人操作。</p>
       <ul style="list-style:none;padding:0;margin:12px 0 0;font-size:14px;color:var(--ink-2)">
         <li>· 首单 3,000 元起（限前 10 家），全额抵扣</li>
         <li>· 免费试用 100 次</li>
@@ -57,7 +57,7 @@
     </div>
     <div class="card-soft">
       <h3>怎么接</h3>
-      <p>一个端点 <code>POST /v1/id3</code>，一个请求头 <code>X-API-Key</code>，JSON 进、JSON 出。</p>
+      <p>一个端点 <code>POST /v1/realname</code>，一个请求头 <code>X-API-Key</code>，JSON 进、JSON 出。</p>
       <p style="margin-top:10px"><a href="quickstart.html">看快速开始 →</a></p>
     </div>
   </div>
