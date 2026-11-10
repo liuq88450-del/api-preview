@@ -291,3 +291,11 @@ input:focus, select:focus, textarea:focus { outline: 3px solid #dfe8ff; border-c
   padding: 8px 14px; border-radius: 999px; font-size: 14px; font-weight: 600;
   background: var(--accent-soft); color: var(--accent); border: 1px solid #c9d9ff;
 }
+
+/* 试用申请：生成可复制文本（没有后端时的诚实做法） */
+.form-preview {
+  white-space: pre-wrap; word-break: break-word;
+  background: #f8fafc; border: 1px solid var(--line); border-radius: 10px;
+  padding: 14px 16px; font-size: 14px; line-height: 1.7; color: var(--ink);
+  margin: 0 0 12px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
