@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta name="robots" content="noindex,nofollow">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>实名核验 API · 二要素 0.028 / 三要素 0.23</title>
-<meta name="description" content="实名核验 API：二要素（姓名+身份证）0.028 元/条，三要素（+手机号）0.23 元/条。资源包明码标价，免费试用，30 分钟跑通。">
+<title>三要素实名核验 API · 低至 0.22 元/次</title>
+<meta name="description" content="三要素实名核验 API：姓名+身份证+手机号一次核验，低至 0.22 元/次。免费试用 100 次，报错不计费，30 分钟跑通。">
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
-<div style="background:#fff3cd;border-bottom:1px solid #f0d98c;padding:8px 16px;font:14px/1.5 -apple-system,sans-serif;color:#7a5b00;text-align:center">内部预览版 · 未正式上线 · 请勿外传</div>
 
 <header class="topbar">
   <a class="brand" href="index.html">实名核验 API<span>经授权通道</span></a>
@@ -28,7 +26,7 @@
     <p class="eyebrow">经授权的实名核验通道 · 数据来自合法数据源</p>
     <h1>实名核验 API</h1>
     <p class="hero-price">低至 <strong>0.22</strong> 元/次</p>
-    <p class="hero-sub">二要素 0.028 元/条，三要素 0.22–0.25 元/次，实人认证单独报价。30 分钟跑通，失败请求不计费。</p>
+    <p class="hero-sub">姓名 + 身份证号 + 手机号，一次请求判断是否属于同一人。30 分钟跑通，报错不计费。</p>
     <div class="hero-cta">
       <span class="free-badge">免费试用 100 次</span>
       <a class="btn btn-primary" href="trial.html">立即申请</a>
@@ -36,7 +34,7 @@
     </div>
     <ul class="badge-row">
       <li>数据来源合规</li>
-      <li>失败不计费</li>
+      <li>报错不计费</li>
       <li>支持 HTTPS</li>
       <li>工作日 1 小时响应</li>
     </ul>
@@ -44,55 +42,36 @@
 </section>
 
 <div class="wrap section">
-  <h2>两个产品，按需要选</h2>
-  <p class="section-sub">先用二要素做注册核验，风控要求上来再加手机号升级三要素。</p>
+  <h2>只做一件事：三要素核验</h2>
+  <p class="section-sub">姓名 + 身份证号 + 手机号，返回一致 / 不一致 / 查无记录。不做花活，把这一件事做稳。</p>
   <div class="cards2">
     <div class="card-soft">
-      <span class="badge">引流款</span>
-      <h3 style="margin-top:12px">二要素 · 姓名 + 身份证</h3>
-      <div class="amount" style="font-size:30px;margin:8px 0">0.028<small> 元/条起</small></div>
-      <p>适合注册、入驻、活动防刷。便宜、决策快，量大。</p>
+      <span class="badge">主力产品</span>
+      <h3 style="margin-top:12px">三要素 · 姓名 + 身份证 + 手机号</h3>
+      <div class="amount" style="font-size:30px;margin:8px 0">0.22–0.25<small> 元/次</small></div>
+      <p>适合下单、提现、开卡、注册。多核一项手机号，风控更严。</p>
       <ul style="list-style:none;padding:0;margin:12px 0 0;font-size:14px;color:var(--ink-2)">
-        <li>· 最低预存 1 万元，全额抵扣调用量</li>
-        <li>· 免费试用 100 条</li>
+        <li>· 首单 3,000 元起（限前 10 家），全额抵扣</li>
+        <li>· 免费试用 100 次</li>
       </ul>
     </div>
     <div class="card-soft">
-      <span class="badge">利润款</span>
-      <h3 style="margin-top:12px">三要素 · 姓名 + 身份证 + 手机号</h3>
-      <div class="amount" style="font-size:30px;margin:8px 0">0.23<small> 元/条起</small></div>
-      <p>适合下单、提现、开卡。多核一项手机号，风控更严。</p>
-      <ul style="list-style:none;padding:0;margin:12px 0 0;font-size:14px;color:var(--ink-2)">
-        <li>· 最低预存 1 万元，0.22–0.25 元/次</li>
-        <li>· 免费试用 50 条</li>
-      </ul>
+      <h3>怎么接</h3>
+      <p>一个端点 <code>POST /v1/id3</code>，一个请求头 <code>X-API-Key</code>，JSON 进、JSON 出。</p>
+      <p style="margin-top:10px"><a href="quickstart.html">看快速开始 →</a></p>
     </div>
   </div>
 </div>
 
 <div class="band">
   <div class="wrap section">
-    <h2>价格（按条计费，最低预存 1 万元）</h2>
-    <p class="section-sub">预存金额全额抵扣调用量，不设月费；失败请求不计费；余额低于 20% 提醒。</p>
-    <div class="cards2">
-      <div class="card-soft">
-        <h3>二要素</h3>
-        <div class="tbl">
-        <table>
-          <tr><th>单价</th><th>预存 10,000 元可抵扣</th></tr>
-          <tr><td>0.028 元/条</td><td>约 357,142 条</td></tr>
-        </table>
-        </div>
-      </div>
-      <div class="card-soft">
-        <h3>三要素</h3>
-        <div class="tbl">
-        <table>
-          <tr><th>单价</th><th>预存 10,000 元可抵扣</th></tr>
-          <tr><td>0.22–0.25 元/条</td><td>约 43,478 条（按 0.23）</td></tr>
-        </table>
-        </div>
-      </div>
+    <h2>价格（首单 3,000 元起，标准 1 万元）</h2>
+    <p class="section-sub">预存金额全额抵扣调用量，不设月费；报错不计费；余额低于 20% 提醒。</p>
+    <div class="tbl">
+    <table>
+      <tr><th>产品</th><th>单价</th><th>首单预存</th><th>3,000 元可抵扣</th></tr>
+      <tr><td>三要素</td><td>0.22–0.25 元/次</td><td>3,000 元起</td><td>约 13,043 次（按 0.23）</td></tr>
+    </table>
     </div>
     <p style="margin-top:18px"><a href="pricing.html">看完整价格与用量估算 →</a></p>
   </div>
@@ -126,9 +105,9 @@
 <div class="wrap section">
   <h2>常见问题</h2>
   <div class="cards2">
-    <div class="card-soft"><h3>二要素和三要素怎么选？</h3><p>只核姓名和身份证选二要素；还要核手机号选三要素，风控更严。</p></div>
-    <div class="card-soft"><h3>免费试用怎么领？</h3><p>注册后各领一次：二要素 100 条、三要素 50 条，7 天有效。</p></div>
-    <div class="card-soft"><h3>失败请求收费吗？</h3><p>不计费。只对成功返回核验结果的请求扣减。</p></div>
+    <div class="card-soft"><h3>为什么只做三要素？</h3><p>三要素覆盖注册、下单、提现、开卡的主流场景，不做其它品类。</p></div>
+    <div class="card-soft"><h3>免费试用怎么领？</h3><p>申请后发 100 次免费额度，限 1 次，7 天有效。</p></div>
+    <div class="card-soft"><h3>什么情况计费？</h3><p>完成核验才计费：一致、不一致都算完成；参数错、Key 无效、限流、额度不足、上游异常都不计费。</p></div>
     <div class="card-soft"><h3>能开发票吗？</h3><p>可以，6% 增值税专用发票，到账后 5 个工作日内。</p></div>
   </div>
   <p style="margin:20px 0 0"><a href="faq.html">更多场景与合规问答 →</a></p>
