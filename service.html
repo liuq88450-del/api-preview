@@ -49,7 +49,19 @@
   </div>
   <p>通道故障的最终口径以上游确认为准，合同按"未返回核验结果不计费"签署。</p>
 
-  <h2 id="materials">3. 接入材料</h2>
+  <h2 id="scope">3. 服务边界：人脸采集不归我们</h2>
+  <div class="tbl">
+  <table>
+    <tr><th>事项</th><th>谁负责</th><th>说明</th></tr>
+    <tr><td>采集本人照片</td><td><strong>客户</strong></td><td>你用什么方式拍、怎么引导用户、照片存不存，都是你的事</td></tr>
+    <tr><td>告知与单独同意</td><td><strong>客户</strong></td><td>人脸属敏感个人信息，需在你自己的隐私政策里说明并取得单独同意</td></tr>
+    <tr><td>姓名 + 身份证号 + 人脸照片的一致性比对</td><td><strong>我们</strong></td><td>你把三项发来，我们入库比对，返回一致 / 不一致</td></tr>
+    <tr><td>活体检测</td><td><strong>不提供</strong></td><td>我们不判断"镜头前是不是活人"，只做静态人像比对</td></tr>
+    <tr><td>照片不合格的判定</td><td><strong>我们</strong></td><td>返回 IMAGE_INVALID 和具体原因，不计费</td></tr>
+  </table>
+  </div>
+
+  <h2 id="materials">4. 接入材料</h2>
   <p>开通前准备这些，齐了当天能发 Key：</p>
   <div class="tbl">
   <table>
