@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta name="robots" content="noindex,nofollow">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>申请免费试用 · 实名核验 API</title>
-<meta name="description" content="免费试用二要素 100 条、三要素 50 条，7 天有效。提交企业信息，30 分钟跑通第一笔核验。">
+<meta name="description" content="免费试用三要素核验 100 次，7 天有效。提交企业信息，30 分钟跑通第一笔核验。">
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
-<div style="background:#fff3cd;border-bottom:1px solid #f0d98c;padding:8px 16px;font:14px/1.5 -apple-system,sans-serif;color:#7a5b00;text-align:center">内部预览版 · 未正式上线 · 请勿外传</div>
 
 <header class="topbar">
   <a class="brand" href="index.html">实名核验 API<span>申请试用</span></a>
@@ -26,13 +24,13 @@
 <div class="wrap">
   <h1 style="margin-top:8px">申请免费试用</h1>
   <p style="margin:6px 0 12px"><span class="free-badge">免费试用 100 次</span></p>
-  <p class="lead">二要素 100 条、三要素 50 条，每个账号各限 1 次，7 天有效。不用先付款，30 分钟跑通第一笔。</p>
+  <p class="lead">三要素免费 100 次，限 1 次，7 天有效。不用先付款，30 分钟跑通第一笔。</p>
 
   <div class="flow" style="margin:28px 0 40px">
     <div class="step"><b>1. 提交信息</b><span>公司/个人、用途、想试哪个产品。</span></div>
     <div class="step"><b>2. 发放额度</b><span>系统自动发放，邮件发测试 Key。</span></div>
     <div class="step"><b>3. 30 分钟跑通</b><span>拿 Key、curl 发请求。</span></div>
-    <div class="step"><b>4. 预存上线</b><span>最低预存 1 万元，全额抵扣。</span></div>
+    <div class="step"><b>4. 预存上线</b><span>首单 3,000 元起（限前 10 家），全额抵扣。</span></div>
   </div>
 
   <h2 style="margin-top:0">填写申请</h2>
@@ -71,12 +69,11 @@
       </select>
     </div>
     <div class="field full">
-      <label>想试哪个产品 <span style="color:#dc2626">*</span></label>
+      <label>试用产品</label>
       <div class="radio-row">
-        <label><input type="checkbox" name="product" value="二要素（100 条）"> 二要素 100 条</label>
-        <label><input type="checkbox" name="product" value="三要素（50 条）"> 三要素 50 条</label>
+        <label><input type="checkbox" name="product" value="三要素（100 次）" checked> 三要素 100 次</label>
       </div>
-      <span class="form-hint">可以两个都选，各限领 1 次。</span>
+      <span class="form-hint">当前只提供三要素核验。</span>
     </div>
     <div class="field full">
       <label for="scene">使用场景 <span style="color:#dc2626">*</span></label>
@@ -100,7 +97,7 @@
   <table>
     <tr><th>规则</th><th>内容</th></tr>
     <tr><td>一码一账号</td><td>同一手机号、同一统一社会信用代码、同一邮箱域名，任一已领过即不再发放；同一企业只发一次。</td></tr>
-    <tr><td>限时限额</td><td>7 天有效；二要素每天最多 50 条、三要素每天最多 20 条；不可叠加、不可转移、到期清零。</td></tr>
+    <tr><td>限时限额</td><td>7 天有效；每天最多 20 次；不可叠加、不可转移、到期清零。</td></tr>
     <tr><td>风险识别</td><td>同一 IP 24 小时内注册 ≥3 个试用账号转人工审核；请求间隔机械或命中黑名单号段自动冻结。</td></tr>
   </table>
   </div>
@@ -108,12 +105,11 @@
   <h2>试用满意后怎么买</h2>
   <div class="tbl">
   <table>
-    <tr><th>产品</th><th>单价</th><th>预存 10,000 元可抵扣</th></tr>
-    <tr><td>二要素</td><td>0.028 元/条</td><td>约 357,142 条</td></tr>
-    <tr><td>三要素</td><td>0.22–0.25 元/条</td><td>约 43,478 条（按 0.23）</td></tr>
+    <tr><th>产品</th><th>单价</th><th>3,000 元可抵扣</th></tr>
+    <tr><td>三要素</td><td>0.22–0.25 元/次</td><td>约 13,043 次（按 0.23）</td></tr>
   </table>
   </div>
-  <p>最低预存 10,000 元，预存金额可全额抵扣调用量；不设月费，余额低于 20% 短信 + 邮件提醒。</p>
+  <p>首单最低预存 3,000 元（限前 10 家，标准 10,000 元），预存可全额抵扣调用量；不设月费，余额低于 20% 短信 + 邮件提醒。</p>
 
   <div class="notice">
     <p><strong>关于密钥：</strong>测试 Key 发到注册邮箱，不走微信群。Key 只放服务端，不要写进前端或代码仓库。</p>
