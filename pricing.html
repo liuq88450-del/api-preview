@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta name="robots" content="noindex,nofollow">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>价格 · 实名核验 API（二要素 / 三要素）</title>
-<meta name="description" content="实名核验 API 价格：二要素 0.028 元/条，三要素 0.22–0.25 元/条；最低预存 1 万元，预存全额抵扣调用量，失败不计费。">
+<title>价格 · 三要素实名核验 API</title>
+<meta name="description" content="三要素实名核验 API 价格：0.22–0.25 元/次，首单 3,000 元起（限前 10 家），标准预存 1 万元，全额抵扣，报错不计费。">
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
-<div style="background:#fff3cd;border-bottom:1px solid #f0d98c;padding:8px 16px;font:14px/1.5 -apple-system,sans-serif;color:#7a5b00;text-align:center">内部预览版 · 未正式上线 · 请勿外传</div>
 
 <header class="topbar">
   <a class="brand" href="index.html">实名核验 API<span>价格</span></a>
@@ -26,33 +24,24 @@
 <div class="wrap">
   <h1 style="margin-top:8px">价格</h1>
   <p class="hero-price" style="font-size:30px;margin-bottom:10px">低至 <strong style="font-size:40px">0.22</strong> 元/次</p>
-  <p class="lead">按条计费，预存余额扣减。最低预存 1 万元，预存金额可全额抵扣调用量，不设月费。</p>
+  <p class="lead">按次计费，预存余额扣减。首单 3,000 元起（限前 10 家），标准预存 1 万元；预存全额抵扣，不设月费。</p>
   <ul class="badge-row" style="margin-top:18px">
     <li>数据来源合规</li>
-    <li>失败不计费</li>
+    <li>报错不计费</li>
     <li>支持 HTTPS</li>
     <li>工作日 1 小时响应</li>
   </ul>
 
   <div class="notice" style="margin:24px 0 8px">
-    <p><strong>预存规则</strong>：最低预存 10,000 元；余额按每次成功核验的单价扣减，可全额抵扣；余额低于 20% 自动提醒；<strong>失败请求不计费</strong>。</p>
-  </div>
-
-  <h2 id="two">二要素 · 姓名 + 身份证</h2>
-  <p>适合注册、入驻、活动防刷。便宜、决策快，量大。</p>
-  <div class="tbl">
-  <table>
-    <tr><th>单价（含税）</th><th>最低预存</th><th>预存 10,000 元可抵扣</th></tr>
-    <tr><td><strong>0.028 元/条</strong></td><td>10,000 元</td><td>约 357,142 条</td></tr>
-  </table>
+    <p><strong>预存规则</strong>：首单最低预存 3,000 元（限前 10 家），标准 10,000 元；余额按次扣减、全额抵扣；低于 20% 自动提醒；<strong>报错不计费</strong>。</p>
   </div>
 
   <h2 id="three">三要素 · 姓名 + 身份证 + 手机号</h2>
   <p>适合下单、提现、开卡。多核一项手机号，风控更严。</p>
   <div class="tbl">
   <table>
-    <tr><th>单价（含税）</th><th>最低预存</th><th>预存 10,000 元可抵扣</th></tr>
-    <tr><td><strong>0.22–0.25 元/条</strong><br><span class="muted">标准 0.23 元/条</span></td><td>10,000 元</td><td>约 43,478 条（按 0.23）</td></tr>
+    <tr><th>单价（含税）</th><th>首单预存</th><th>3,000 元可抵扣</th></tr>
+    <tr><td><strong>0.22–0.25 元/次</strong><br><span class="muted">标准 0.23 元/次</span></td><td>3,000 元起</td><td>约 13,043 次（按 0.23）</td></tr>
   </table>
   </div>
 
@@ -60,13 +49,13 @@
   <p>按标准单价估算，实际以账单价为准。</p>
   <div class="tbl">
   <table>
-    <tr><th>日用量</th><th>二要素月费用（约）</th><th>三要素月费用（约）</th></tr>
-    <tr><td>500 条/天</td><td>420 元</td><td>3,450 元</td></tr>
-    <tr><td>1,000 条/天</td><td>840 元</td><td>6,900 元</td></tr>
-    <tr><td>3,000 条/天</td><td>2,520 元</td><td>20,700 元</td></tr>
+    <tr><th>日用量</th><th>月费用（约）</th></tr>
+    <tr><td>500 条/天</td><td>3,450 元</td></tr>
+    <tr><td>1,000 条/天</td><td>6,900 元</td></tr>
+    <tr><td>3,000 条/天</td><td>20,700 元</td></tr>
   </table>
   </div>
-  <p style="font-size:13.5px;color:var(--ink-2)">二要素按 0.028、三要素按 0.23 估算。</p>
+  <p style="font-size:13.5px;color:var(--ink-2)">按 0.23 元/次估算。</p>
 
   <h2>计费规则</h2>
   <div class="tbl">
@@ -82,12 +71,12 @@
 
   <h2>准确率口径</h2>
   <div class="notice">
-    <p>我们<strong>不承诺 100% 准确率，也不承诺通过率</strong>；只承诺服务可用性（以 SLA 为准）和失败请求不计费。失败时返回 <code>code</code> / <code>reason</code>，帮助客户自查，原因说明见 <a href="failure-reasons.html">核验不通过的常见原因</a>。</p>
+    <p>我们<strong>不承诺 100% 准确率，也不承诺通过率</strong>；只承诺服务可用性（以 SLA 为准）和报错不计费。失败时返回 <code>code</code> / <code>reason</code>，帮助客户自查，原因说明见 <a href="failure-reasons.html">核验不通过的常见原因</a>。</p>
   </div>
 
   <h2>充值与开票</h2>
   <div class="cards2">
-    <div class="card-soft"><h3>充值方式</h3><p>在线支付（微信/支付宝）或公对公转账；单笔最低 10,000 元，款到开通余额。不接收个人账户付款。</p></div>
+    <div class="card-soft"><h3>充值方式</h3><p>在线支付（微信/支付宝）或公对公转账；首单最低 3,000 元（标准 10,000 元），款到开通余额。不接收个人账户付款。</p></div>
     <div class="card-soft"><h3>发票</h3><p>6% 增值税专用发票（信息技术服务），到账后 5 个工作日内；个人客户可开普票。</p></div>
     <div class="card-soft"><h3>对账</h3><p>控制台实时用量；每月 3 日出上月账单，5 个工作日内确认。</p></div>
     <div class="card-soft"><h3>退款</h3><p>未使用余额可按合同申请退款；已消耗部分不退。具体以协议为准。</p></div>
@@ -97,7 +86,7 @@
   <div class="cards2">
     <div class="card-soft"><h3>预存的钱会过期吗？</h3><p>不会。余额按调用逐条扣减，用完为止。</p></div>
     <div class="card-soft"><h3>能给账期吗？</h3><p>不做账期，全部预存。大额月结需求请转商务负责人。</p></div>
-    <div class="card-soft"><h3>价格还能谈吗？</h3><p>三要素在 0.22–0.25 区间按量定，最低 0.22；二要素标准 0.028。</p></div>
+    <div class="card-soft"><h3>价格还能谈吗？</h3><p>三要素在 0.22–0.25 区间按量定，最低 0.22。</p></div>
     <div class="card-soft"><h3>失败请求真的不计费？</h3><p>真的。参数错、系统异常都不扣费，只扣成功核验。返回 reason 字段可自查。</p></div>
   </div>
 
