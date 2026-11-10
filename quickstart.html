@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta name="robots" content="noindex,nofollow">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>快速开始 · 实名核验 API</title>
-<meta name="description" content="10 分钟跑通实名核验 API：拿 Key、发第一笔 JSON 请求、看返回码。">
+<title>快速开始 · 三要素实名核验 API</title>
+<meta name="description" content="10 分钟跑通三要素实名核验 API：拿 Key、发第一笔 JSON 请求、看返回码。">
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
-<div style="background:#fff3cd;border-bottom:1px solid #f0d98c;padding:8px 16px;font:14px/1.5 -apple-system,sans-serif;color:#7a5b00;text-align:center">内部预览版 · 未正式上线 · 请勿外传</div>
 
 <header class="topbar">
   <a class="brand" href="index.html">实名核验 API<span>快速开始</span></a>
@@ -40,38 +38,23 @@ export API_BASE="https://【开通时给的域名】"</code></pre>
 
   <p>Key 只放服务端，不要写进前端、App 包或代码仓库。</p>
 
-  <h2 id="step2">2. 发第一笔二要素（2 分钟）</h2>
-
-<pre><code>curl -s -X POST "$API_BASE/v1/id2" \
-  -H "X-API-Key: $API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"name":"张*","id_number":"110101********1234"}'</code></pre>
-
-  <p>成功返回：</p>
-
-<pre><code>{
-  "code": "OK",
-  "request_id": "r_2f8a1c...",
-  "result": { "match": true, "level": "id2" },
-  "billed": true
-}</code></pre>
-
-  <h2 id="step3">3. 三要素 / 实人认证（3 分钟）</h2>
-
-  <p>三要素多一个手机号：</p>
+  <h2 id="step2">2. 发第一笔三要素（2 分钟）</h2>
 
 <pre><code>curl -s -X POST "$API_BASE/v1/id3" \
   -H "X-API-Key: $API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"name":"张*","id_number":"110101********1234","mobile":"138****5678"}'</code></pre>
 
-  <p>实人认证多一个 <code>image_base64</code>（JPG，5–50KB）：</p>
+  <p class="muted" style="font-size:14px;color:var(--ink-2)">注意：示例里的姓名、证件号、手机号是打码的，原样复制会返回 <code>PARAM_INVALID</code>，这是正常的；把这三项换成你自己的测试数据即可复制跑通。</p>
 
-<pre><code>B64=$(base64 -i face.jpg | tr -d '\n')
-curl -s -X POST "$API_BASE/v1/realname" \
-  -H "X-API-Key: $API_KEY" \
-  -H "Content-Type: application/json" \
-  -d "{\"name\":\"张*\",\"id_number\":\"110101********1234\",\"image_base64\":\"$B64\"}"</code></pre>
+  <p>成功返回：</p>
+
+<pre><code>{
+  "code": "OK",
+  "request_id": "r_2f8a1c...",
+  "result": { "match": true, "level": "id3" },
+  "billed": true
+}</code></pre>
 
   <h2 id="step4">4. 看返回码（2 分钟）</h2>
 
@@ -92,9 +75,9 @@ curl -s -X POST "$API_BASE/v1/realname" \
   <h2 id="trouble">跑不通？先查四条</h2>
   <ol>
     <li><strong>Key 没生效</strong>：<code>echo $API_KEY</code> 确认；请求头是 <code>X-API-Key</code>，不是 Authorization。</li>
-    <li><strong>路径不对</strong>：<code>/v1/id2</code>、<code>/v1/id3</code>、<code>/v1/realname</code>，大小写敏感。</li>
-    <li><strong>字段名不对</strong>：<code>id_number</code> 不是 idcard；三要素是 <code>mobile</code>。</li>
-    <li><strong>图片太大/太小</strong>：JPG 原图 5–50KB，Base64 后提交。</li>
+    <li><strong>路径不对</strong>：只有 <code>/v1/id3</code>，大小写敏感。</li>
+    <li><strong>字段名不对</strong>：<code>id_number</code> 不是 idcard，手机号字段是 <code>mobile</code>。</li>
+    
   </ol>
 
   <h2 id="next">跑通之后</h2>
