@@ -48,7 +48,7 @@
     <tr><th>reason</th><th>含义</th><th>先查什么</th></tr>
     <tr><td><code>NAME_INVALID</code></td><td>姓名格式不对</td><td>是否为空、超长、含特殊字符</td></tr>
     <tr><td><code>ID_FORMAT_INVALID</code></td><td>身份证号格式不对</td><td>是否 18 位、末位 X、有无空格</td></tr>
-    <tr><td><code>MOBILE_FORMAT_INVALID</code></td><td>手机号格式不对</td><td>是否 11 位、是否 1 开头</td></tr>
+    <tr><td><code>IMAGE_QUALITY</code></td><td>照片质量不合格</td><td>是否清晰、正脸、无遮挡、光线正常；是否 JPG、5–50KB</td></tr>
     <tr><td><code>IMAGE_INVALID</code></td><td>图片不合格</td><td>是否 JPG、5–50KB、Base64 正确</td></tr>
     <tr><td><code>BODY_INVALID</code></td><td>请求体不是合法 JSON</td><td>Content-Type、JSON 语法</td></tr>
     <tr><td><code>IDENTITY_NOT_MATCHED</code></td><td>核验完成，但不一致 / 无记录</td><td>看下面四类原因</td></tr>
@@ -63,7 +63,7 @@
     <ul style="margin:0">
       <li>身份证号逐位核对，重点看末位 X、数字 0/O、1/I 混淆；</li>
       <li>姓名用字：同音字、生僻字、简体/繁体、曾用名；</li>
-      <li>手机号是否本人实名（运营商 App 可查"一证通查"）；</li>
+      <li>照片是不是本人近期、清晰、正脸无遮挡；</li>
       <li>证件是否在有效期内、是否挂失。</li>
     </ul>
     <h3>给客户的建议</h3>
@@ -73,7 +73,7 @@
   <h2 id="type2">2. 数据源延迟</h2>
   <div class="card-soft" style="margin:16px 0">
     <h3>现象</h3>
-    <p>刚迁户、刚改名、刚补办证件、刚换手机号，核验不通过；隔几天再试，自动好了。</p>
+    <p>刚迁户、刚改名、刚补办身份证，人像库还没更新，核验不通过；隔几天再试，通常就好了。</p>
     <h3>怎么判断</h3>
     <ul style="margin:0">
       <li>问用户最近 30 天是否办过户籍、证件、号码变更业务；</li>
@@ -104,7 +104,7 @@
     <p>同一个人，今天过、明天不过；或者在不同服务商那里结果不一样。</p>
     <h3>怎么判断</h3>
     <ul style="margin:0">
-      <li>确认两次输入完全一致（姓名、号码、手机号）；</li>
+      <li>确认两次输入完全一致（姓名、证件号），照片用的是同一张清晰正脸照；</li>
       <li>记录每次的 <code>request_id</code> 和时间，联系我们对比；</li>
       <li>区分是"信息变了"还是"通道变了"。</li>
     </ul>
@@ -115,7 +115,7 @@
   <h2 id="check">5 步自查</h2>
   <ol>
     <li>看 <code>code</code> 和 <code>reason</code>，先排除格式和余额问题；</li>
-    <li>核对身份证号、姓名用字、手机号是否本人实名；</li>
+    <li>核对身份证号、姓名用字，换一张更清晰的本人照片重试；</li>
     <li>问用户最近有没有迁户、改名、补证、换号；</li>
     <li>同一信息隔 3–7 天复测一次；</li>
     <li>仍不通过，带 <code>request_id</code> + 发生时间 + 脱敏后的输入特征（不要发完整证件号）提工单。</li>
