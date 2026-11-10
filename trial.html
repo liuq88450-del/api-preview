@@ -92,7 +92,7 @@
   </form>
 
   <div id="form-preview-wrap" hidden>
-    <p class="form-hint">把下面这段复制后发给对接人（微信或邮件都行），我们会在 30 分钟内回你测试 Key：</p>
+    <p class="form-hint">两种方式都行：<strong>①</strong> 点「生成试用申请」会自动打开邮件，直接发出去；<strong>②</strong> 复制下面的内容，发到 <a href="mailto:liuq88450@gmail.com">liuq88450@gmail.com</a>。收到后 30 分钟内回你测试 Key。</p>
     <pre id="form-preview" class="form-preview"></pre>
     <button type="button" class="btn" id="copy-btn">复制申请内容</button>
     <span class="form-status" id="copy-status"></span>
@@ -129,14 +129,14 @@
     我们仅将申请信息用于联系与资质审核，不对外提供。
     <br>
     <a href="service.html">服务与承诺</a> · <a href="trust.html">信任与资质</a> · <a href="compliance.html">合规说明</a> · <a href="faq.html">问答</a> · <a href="failure-reasons.html">失败原因</a>
-    <br>资质文件：营业执照、备案证明、授权说明函，可提供，<a href="trial.html">联系后发送</a>。
+    <br>本服务由实名核验 API 服务团队提供；营业执照、备案证明、授权说明函可提供，联系后发送。<br>售前咨询：<a href="mailto:liuq88450@gmail.com">liuq88450@gmail.com</a>　·　<a href="trial.html">申请免费试用 100 次</a>
   </div>
 </footer>
 
 <script>
 (function () {
   // 有真实销售邮箱时走邮件；没有时生成可复制文本，不当场假装已提交。
-  var SALES_EMAIL = ""; // 待填真实邮箱，例如 service@yourdomain.com
+  var SALES_EMAIL = "liuq88450@gmail.com"; // 临时用这个邮箱，换成专门的销售邮箱改这一行即可
 
   var form = document.getElementById("trial-form");
   var status = document.getElementById("form-status");
