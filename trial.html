@@ -86,10 +86,17 @@
       </label>
     </div>
     <div class="form-actions">
-      <button class="btn btn-primary" type="submit">提交并领取额度</button>
+      <button class="btn btn-primary" type="submit">生成试用申请</button>
       <span class="form-status" id="form-status"></span>
     </div>
   </form>
+
+  <div id="form-preview-wrap" hidden>
+    <p class="form-hint">把下面这段复制后发给对接人（微信或邮件都行），我们会在 30 分钟内回你测试 Key：</p>
+    <pre id="form-preview" class="form-preview"></pre>
+    <button type="button" class="btn" id="copy-btn">复制申请内容</button>
+    <span class="form-status" id="copy-status"></span>
+  </div>
 
   <h2>免费额度规则（防滥用）</h2>
   <p>额度是给真实业务验证用的，规则写清楚，避免大家都不够用。</p>
@@ -121,19 +128,22 @@
     本服务为经授权的实名核验通道，结果仅用于身份一致性核验。数据来自合法数据源。<br>
     我们仅将申请信息用于联系与资质审核，不对外提供。
     <br>
-    <a href="service.html">服务与承诺</a> · <a href="trust.html">信任与资质</a> · <a href="compliance.html">合规说明</a> · <a href="faq.html">问答</a>
-        <a href="service.html">服务与承诺</a> · <a href="trust.html">信任与资质</a> · <a href="compliance.html">合规说明</a> · <a href="faq.html">问答</a> · <a href="failure-reasons.html">失败原因</a>
+    <a href="service.html">服务与承诺</a> · <a href="trust.html">信任与资质</a> · <a href="compliance.html">合规说明</a> · <a href="faq.html">问答</a> · <a href="failure-reasons.html">失败原因</a>
     <br>运营主体：【待填：公司全称】　ICP 备案号：【待填：备案号】
   </div>
 </footer>
 
 <script>
 (function () {
-  // 上线前替换为真实销售邮箱
-  var SALES_EMAIL = "sales@example.com";
+  // 有真实销售邮箱时走邮件；没有时生成可复制文本，不当场假装已提交。
+  var SALES_EMAIL = ""; // 待填真实邮箱，例如 service@yourdomain.com
 
   var form = document.getElementById("trial-form");
   var status = document.getElementById("form-status");
+  var wrap = document.getElementById("form-preview-wrap");
+  var preview = document.getElementById("form-preview");
+  var copyBtn = document.getElementById("copy-btn");
+  var copyStatus = document.getElementById("copy-status");
 
   form.addEventListener("submit", function (e) {
     e.preventDefault();
@@ -157,6 +167,7 @@
     var get = function (id) { return (document.getElementById(id).value || "").trim(); };
 
     var lines = [
+      "【三要素核验 试用申请】",
       "公司/团队：" + get("company"),
       "统一社会信用代码：" + (get("credit") || "未填"),
       "联系人：" + get("contact"),
@@ -169,14 +180,43 @@
       get("scene")
     ];
 
-    var subject = "免费试用申请 - " + get("company");
     var body = lines.join("\n");
-    window.location.href = "mailto:" + SALES_EMAIL +
-      "?subject=" + encodeURIComponent(subject) +
-      "&body=" + encodeURIComponent(body);
+    preview.textContent = body;
+    wrap.hidden = false;
+
+    if (SALES_EMAIL) {
+      var subject = "免费试用申请 - " + get("company");
+      window.location.href = "mailto:" + SALES_EMAIL +
+        "?subject=" + encodeURIComponent(subject) +
+        "&body=" + encodeURIComponent(body);
+      status.style.color = "#15803d";
+      status.textContent = "已生成邮件，请在邮件客户端中发送。";
+      return;
+    }
 
     status.style.color = "#15803d";
-    status.textContent = "已生成邮件，请在邮件客户端中发送；若未自动打开，请复制内容发至 " + SALES_EMAIL;
+    status.textContent = "已生成，请复制下面内容发给对接人。";
+    preview.scrollIntoView({ behavior: "smooth", block: "center" });
+  });
+
+  copyBtn.addEventListener("click", function () {
+    var text = preview.textContent || "";
+    var done = function () {
+      copyStatus.style.color = "#15803d";
+      copyStatus.textContent = "已复制。";
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, function () {
+        copyStatus.textContent = "复制失败，请手动选中上面文字复制。";
+      });
+    } else {
+      var r = document.createRange();
+      r.selectNodeContents(preview);
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(r);
+      copyStatus.textContent = "已选中，请按 Ctrl/Cmd+C 复制。";
+    }
   });
 })();
 </script>
