@@ -27,7 +27,7 @@
 <article>
 
   <h1>API 文档</h1>
-  <p class="lead">一个端点：<code>POST /v1/id3</code>，核验姓名、身份证号、手机号是否属于同一人。一套鉴权、一套返回码。</p>
+  <p class="lead">一个端点：<code>POST /v1/realname</code>，核验姓名、身份证号和本人照片是否属于同一人（三要素）。一套鉴权、一套返回码。</p>
 
   <div class="notice">
     <p>请求和返回都是 JSON；鉴权只用一个请求头 <code>X-API-Key</code>。不需要签名、不需要拼时间戳。</p>
@@ -41,7 +41,7 @@
   <div class="tbl">
   <table>
     <tr><th>端点</th><th>用途</th><th>必填字段</th></tr>
-    <tr><td><code>POST /v1/id3</code></td><td>三要素核验</td><td>name, id_number, mobile</td></tr>
+    <tr><td><code>POST /v1/realname</code></td><td>三要素核验（姓名 + 身份证 + 人像）</td><td>name, id_number, image_base64</td></tr>
   </table>
   </div>
 
@@ -64,17 +64,21 @@
     <tr><th>字段</th><th>类型</th><th>必填</th><th>说明</th></tr>
     <tr><td><code>name</code></td><td>string</td><td>是</td><td>姓名，1–40 字符</td></tr>
     <tr><td><code>id_number</code></td><td>string</td><td>是</td><td>18 位身份证号，末位可为 X</td></tr>
-    <tr><td><code>mobile</code></td><td>string</td><td>是</td><td>11 位手机号</td></tr>
+    <tr><td><code>image_base64</code></td><td>string</td><td>是</td><td>本人照片，JPG，原图 5–50KB，Base64 编码且<strong>不带</strong> <code>data:image/...</code> 前缀</td></tr>
   </table>
   </div>
 
-<pre><code>curl -s -X POST https://api.example.com/v1/id3 \
+<pre><code># 1) 把照片转成 Base64（去掉换行，去掉 data: 前缀）
+BASE64=$(base64 -i photo.jpg | tr -d '\n')
+
+# 2) 发请求
+curl -s -X POST https://api.example.com/v1/realname \
   -H "X-API-Key: $API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"name":"张*","id_number":"110101********1234","mobile":"138****5678"}'</code></pre>
+  -d "{\"name\":\"张三\",\"id_number\":\"110101199001011234\",\"image_base64\":\"$BASE64\"}"</code></pre>
 
   <!-- 4 -->
-  <p class="muted" style="font-size:14px;color:var(--ink-2)">示例里的姓名、证件号、手机号是打码的，直接复制会返回 <code>PARAM_INVALID</code>；换成你自己的测试数据即可跑通。</p>
+  <p class="muted" style="font-size:14px;color:var(--ink-2)">照片要求：<strong>JPG 格式、5–50KB</strong>、Base64 不带前缀。示例里的姓名和证件号是虚构的，照片请用你自己的测试图；照片不合格会返回 <code>IMAGE_INVALID</code>，不计费。</p>
 
   <h2 id="response">4. 返回</h2>
 
@@ -83,7 +87,7 @@
 <pre><code>{
   "code": "OK",
   "request_id": "r_2f8a1c...",
-  "result": { "match": true, "level": "id3" },
+  "result": { "match": true, "level": "realname" },
   "billed": true
 }</code></pre>
 
@@ -92,7 +96,7 @@
 <pre><code>{
   "code": "NO_MATCH",
   "request_id": "r_2f8a1c...",
-  "result": { "match": false, "level": "id3" },
+  "result": { "match": false, "level": "realname" },
   "billed": true
 }</code></pre>
 
@@ -110,10 +114,10 @@
     <tr><th>字段</th><th>说明</th></tr>
     <tr><td><code>code</code></td><td>我方返回码，见第 5 节</td></tr>
     <tr><td><code>message</code></td><td>失败时的提示，不含用户输入内容</td></tr>
-    <tr><td><code>reason</code></td><td>机器可读原因码（如 ID_FORMAT_INVALID、IDENTITY_NOT_MATCHED），用于自查</td></tr>
+    <tr><td><code>reason</code></td><td>机器可读原因码，用于自查：<code>ID_FORMAT_INVALID</code> 证件号格式、<code>NAME_INVALID</code> 姓名、<code>IMAGE_QUALITY</code> 照片质量、<code>FACE_MISMATCH</code> 人像不一致、<code>IDENTITY_NOT_MATCHED</code> 身份信息不匹配</td></tr>
     <tr><td><code>request_id</code></td><td>请求唯一号，排障与对账用，请落日志</td></tr>
     <tr><td><code>result.match</code></td><td>是否一致；失败时没有该字段</td></tr>
-    <tr><td><code>result.level</code></td><td>固定为 id3</td></tr>
+    <tr><td><code>result.level</code></td><td>固定为 realname</td></tr>
     <tr><td><code>billed</code></td><td>本次是否计费</td></tr>
   </table>
   </div>
@@ -128,6 +132,7 @@
     <tr><th>code</th><th>HTTP</th><th>计费</th><th>含义</th><th>建议处理</th></tr>
     <tr id="OK"><td>OK</td><td>200</td><td>是</td><td>核验完成且一致</td><td>放行</td></tr>
     <tr id="NO_MATCH"><td>NO_MATCH</td><td>200</td><td>是</td><td>核验完成但不一致</td><td>拒绝或转人工</td></tr>
+    <tr id="IMAGE_INVALID"><td>IMAGE_INVALID</td><td>400</td><td>否</td><td>照片不合格（格式/大小/质量）</td><td>按提示换照片，不要重试</td></tr>
     <tr id="PARAM_INVALID"><td>PARAM_INVALID</td><td>400</td><td>否</td><td>参数格式错误</td><td>修正参数，不要重试</td></tr>
     <tr id="KEY_INVALID"><td>KEY_INVALID</td><td>401</td><td>否</td><td>Key 无效或停用</td><td>检查 Key，不要重试</td></tr>
     <tr id="NOT_AUTHORIZED"><td>NOT_AUTHORIZED</td><td>403</td><td>否</td><td>无该产品权限</td><td>联系我方开通</td></tr>
@@ -181,7 +186,7 @@
   <h2 id="privacy">9. 数据处理</h2>
 
   <ul>
-    <li>请求体（姓名、身份证号、手机号、照片）<strong>不落库、不写日志</strong>；</li>
+    <li>请求体（姓名、身份证号、照片）<strong>不落库、不写日志</strong>，照片只在内存中处理；</li>
     <li>日志只保留 request_id、Key 前缀、端点、我方码、是否计费、耗时；</li>
     <li>照片只在内存中转发，处理完即丢弃；</li>
     <li>错误信息不含用户输入内容；</li>
@@ -201,7 +206,7 @@
   <p>能，但要带同一个 <code>Idempotency-Key</code>，避免同一笔请求被计费两次。</p>
 
   <h3>一个 Key 能调哪些端点？</h3>
-  <p>只开放三要素 <code>/v1/id3</code>；其它端点不在服务范围。</p>
+  <p>只开放三要素 <code>/v1/realname</code>；旧端点 <code>/v1/id3</code> 已废弃，调用返回 404。</p>
 
   <h3>为什么核验不通过？</h3>
   <p>常见原因是信息填写、数据源延迟、特殊证件类型、通道覆盖差异。见 <a href="failure-reasons.html">核验不通过的常见原因</a>。</p>
