@@ -29,7 +29,7 @@
     <li>数据来源合规</li>
     <li>报错不计费</li>
     <li>支持 HTTPS</li>
-    <li>工作日 1 小时响应</li>
+    <li>工作日 2 小时响应</li>
   </ul>
 
   <div class="notice" style="margin:24px 0 8px">
@@ -51,24 +51,6 @@
 
   <h2>你的用量大概要多少钱</h2>
   <p>按标准单价估算，实际以账单价为准。</p>
-  <div class="tbl">
-  <table>
-    <tr><th>日用量</th><th>月费用（约）</th></tr>
-    <tr><td>500 条/天</td><td>3,450 元</td></tr>
-    <tr><td>1,000 条/天</td><td>6,900 元</td></tr>
-    <tr><td>3,000 条/天</td><td>20,700 元</td></tr>
-  </table>
-  </div>
-  <p style="font-size:13.5px;color:var(--ink-2)">按 0.23 元/次估算。</p>
-
-  <h2 id="zbj">也可以在猪八戒下单</h2>
-  <p>如果你习惯用平台交易（资金托管、平台申诉），可以直接在我们店铺下单，价格与本站一致：</p>
-  <ul>
-    <li><a href="https://www.zbj.com/fw/2412013.html" target="_blank" rel="noopener">三要素实人核验 API 接入</a> — 基础版 190 元（1,000 次）起</li>
-    <li><a href="https://www.zbj.com/fw/2412018.html" target="_blank" rel="noopener">实名核验接口按量开通</a> — 先免费试用 100 次</li>
-    <li><a href="https://www.zbj.com/fw/2412023.html" target="_blank" rel="noopener">小程序 / 网站加实名认证（代接入）</a> — 按项目报价</li>
-  </ul>
-  <p class="muted" style="font-size:14px;color:var(--ink-2)">平台下单由猪八戒提供交易保障；本站下单走对公转账，两种方式价格一致。</p>
 
   <h2>计费规则</h2>
   <div class="tbl">
@@ -78,7 +60,7 @@
     <tr><td>计费口径</td><td>按成功返回核验结果的条数扣减余额；参数错误、鉴权失败、系统异常不计费</td></tr>
     <tr><td>预存抵扣</td><td>预存金额全额抵扣调用量，按单价逐条扣减，不设月费</td></tr>
     <tr><td>余额提醒</td><td>低于预存额的 20% 自动提醒；余额不足暂停服务</td></tr>
-    <tr><td>幂等</td><td>同一 Idempotency-Key 重复请求不重复计费</td></tr>
+    <tr><td>幂等</td><td>同一 Idempotency-Key 在 60 秒内重复请求，返回首次结果、不重复计费</td></tr>
   </table>
   </div>
 
@@ -89,7 +71,7 @@
 
   <h2>充值与开票</h2>
   <div class="cards2">
-    <div class="card-soft"><h3>充值方式</h3><p>在线支付（微信/支付宝）或公对公转账；首单最低 3,000 元（标准 10,000 元），款到开通余额。不接收个人账户付款。</p></div>
+    <div class="card-soft"><h3>充值方式</h3><p>公对公转账（对公账户信息随合同提供）；首单最低 3,000 元（标准 10,000 元），款到开通余额。不接收个人账户付款。</p></div>
     <div class="card-soft"><h3>发票</h3><p>6% 增值税专用发票（信息技术服务），到账后 5 个工作日内；个人客户可开普票。</p></div>
     <div class="card-soft"><h3>对账</h3><p>控制台实时用量；每月 3 日出上月账单，5 个工作日内确认。</p></div>
     <div class="card-soft"><h3>退款</h3><p>未使用余额可按合同申请退款；已消耗部分不退。具体以协议为准。</p></div>
