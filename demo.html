@@ -112,10 +112,10 @@
   <!-- 2 -->
   <div class="step">
     <h3 class="step-h"><span class="step-n">2</span>看余额怎么掉、什么时候自动提醒</h3>
-    <p class="step-p">每完成一次核验扣 0.14 元。余额低于「开户额 20%」时，系统自己给客户发提醒邮件——下面这封就是真实发出去的样子。</p>
+    <p class="step-p">每完成一次核验扣 0.249 元（官网 1,000 次 249 元的单价；买得越多单价越低，量大另议）。余额低于「开户额 20%」时，系统自己给客户发提醒邮件——下面这封就是真实发出去的样子。</p>
     <div style="display:flex;align-items:baseline;gap:9px;flex-wrap:wrap">
       <span class="big" id="bal">￥5.00</span>
-      <span class="muted" style="font-size:12.5px">预警线 ￥1.00 · 单价 ￥0.14/次</span>
+      <span class="muted" style="font-size:12.5px">预警线 ￥1.00 · 单价 ￥0.249/次</span>
     </div>
     <div class="bar" id="bar"><i style="width:100%"></i></div>
     <div class="row">
@@ -148,7 +148,7 @@
 
 <script>
 (function () {
-  var PRICE = 140, START = 5000, THRESHOLD = 1000;
+  var PRICE = 249, START = 5000, THRESHOLD = 1000;
   var bal = START, calls = 0, billed = 0, unbilled = 0, recharged = START, mailSent = false, logs = [];
   var $ = function (id) { return document.getElementById(id); };
   var yuan = function (m) { return '￥' + (m / 1000).toFixed(2); };
@@ -186,17 +186,17 @@
       $('res').innerHTML = '<div class="panel no"><div class="kv">' +
         '<b>结果</b><span>不一致（NO_MATCH）</span>' +
         '<b>耗时</b><span>' + (2.0 + Math.random()).toFixed(2) + ' 秒</span>' +
-        '<b>本次扣费</b><span>￥0.14（核验完成即计费）</span>' +
+        '<b>本次扣费</b><span>￥0.249（核验完成即计费）</span>' +
         '<b>请求号</b><span class="muted">' + rid() + '</span></div></div>';
-      pushLog('不一致 · 扣 ￥0.14');
+      pushLog('不一致 · 扣 ￥0.249');
     } else {
       billed++; bal -= PRICE;
       $('res').innerHTML = '<div class="panel ok"><div class="kv">' +
         '<b>结果</b><span>一致（OK）</span>' +
         '<b>耗时</b><span>' + (0.5 + Math.random() * 0.4).toFixed(2) + ' 秒</span>' +
-        '<b>本次扣费</b><span>￥0.14</span>' +
+        '<b>本次扣费</b><span>￥0.249</span>' +
         '<b>请求号</b><span class="muted">' + rid() + '</span></div></div>';
-      pushLog('一致 · 扣 ￥0.14');
+      pushLog('一致 · 扣 ￥0.249');
     }
     drawBal(); maybeMail();
   }
@@ -213,7 +213,7 @@
       '账户编号：acct_1a2b3c4d5e\n' +
       '当前余额：' + yuan(bal) + '\n' +
       '预警阈值：' + yuan(THRESHOLD) + '（开户预存金额的 20%）\n' +
-      '按当前单价 ￥0.14/次 估算，约可再用 ' + Math.max(0, Math.floor(bal / PRICE)) + ' 次。\n\n' +
+      '按当前单价 ￥0.249/次 估算，约可再用 ' + Math.max(0, Math.floor(bal / PRICE)) + ' 次。\n\n' +
       '充值方式：联系我方对接人转账，到账后由人工入账。\n' +
       '—— 恒永亿科技 · 实名核验服务\n' +
       '工作日 9:00–18:00，2 小时内响应</div></div>';
