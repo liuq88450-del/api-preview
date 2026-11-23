@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>亲手走一遍：从核验到账单（演示）· 实名核验 API</title>
+<meta name="description" content="实名核验 API 的在线演示：调一次核验、看余额怎么扣、余额低自动提醒、导出月度对账单。全部为模拟数据，不联网、不保存、不发送。">
+<style>
+  :root { --ink:#1f2b3d; --ink2:#5b6472; --line:#e6e9ef; --accent:#1a73e8; }
+  * { box-sizing:border-box; }
+  html, body { margin:0; padding:0; }
+  body { font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+         color:var(--ink); background:#f6f8fb; font-size:15px; line-height:1.6;
+         -webkit-text-size-adjust:100%; }
+  a { color:var(--accent); }
+  .topbar { background:#fff; border-bottom:1px solid var(--line); padding:12px 16px; }
+  .topbar-in { max-width:760px; margin:0 auto; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .brand { font-weight:700; font-size:16px; color:var(--ink); text-decoration:none; }
+  .brand span { font-weight:400; font-size:12px; color:var(--ink2); margin-left:6px; }
+  .tagdemo { margin-left:auto; background:#fff4e5; color:#8a5a00; border:1px solid #f3ddb8;
+             border-radius:999px; padding:2px 10px; font-size:12px; }
+  .wrap { max-width:760px; margin:0 auto; padding:22px 16px 56px; }
+  h1 { font-size:23px; margin:0 0 4px; line-height:1.35; }
+  .sub { color:var(--ink2); font-size:14px; margin:0 0 16px; }
+  .demo-note { background:#fff8e6; border:1px solid #f2e0b3; border-radius:10px;
+               padding:11px 14px; font-size:13.5px; color:#7a5a00; }
+  .step { background:#fff; border:1px solid var(--line); border-radius:14px; padding:16px; margin:16px 0; }
+  .step-h { display:flex; align-items:center; gap:9px; margin:0 0 6px; font-size:17px; line-height:1.4; }
+  .step-n { flex:0 0 26px; height:26px; line-height:26px; text-align:center; border-radius:50%;
+            background:var(--accent); color:#fff; font-size:14px; font-weight:700; }
+  .step-p { color:var(--ink2); font-size:13.5px; margin:0 0 12px; }
+  code { background:#f1f4f9; border-radius:4px; padding:1px 5px; font-size:12.5px;
+         font-family:ui-monospace,Menlo,monospace; word-break:break-all; }
+  .field { display:grid; grid-template-columns:1fr; gap:10px; margin-bottom:10px; }
+  @media (min-width:560px){ .field { grid-template-columns:1fr 1fr; } }
+  .field label { font-size:12.5px; color:var(--ink2); display:block; }
+  .field input { display:block; width:100%; height:42px; margin-top:4px; padding:0 11px;
+                 font-size:15px; font-family:inherit; color:var(--ink);
+                 border:1px solid #d7dce5; border-radius:9px; background:#fff; }
+  .field input:focus { outline:3px solid #dfe8ff; border-color:var(--accent); }
+  .row { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+  .b { border:none; border-radius:9px; padding:11px 15px; font-size:14.5px; cursor:pointer;
+       font-family:inherit; line-height:1.2; }
+  .primary { background:var(--accent); color:#fff; }
+  .ghost { background:#f2f5fa; color:var(--ink); border:1px solid #dde3ec; }
+  .warnb { background:#fff1f0; color:#a8071a; border:1px solid #ffd6d6; }
+  .panel { margin-top:14px; border-radius:10px; padding:13px 15px; font-size:13.5px; }
+  .panel.ok { background:#f0f9f2; border:1px solid #cdead8; }
+  .panel.no { background:#fdf3f2; border:1px solid #f6d5d2; }
+  .panel.warn { background:#fff8e6; border:1px solid #f2e0b3; }
+  .kv { display:grid; grid-template-columns:86px 1fr; gap:5px 10px; font-size:13.5px; }
+  .kv b { font-weight:600; color:var(--ink2); }
+  .big { font-size:27px; font-weight:700; }
+  .bar { height:9px; border-radius:6px; background:#eef1f6; overflow:hidden; margin:9px 0 5px; }
+  .bar > i { display:block; height:100%; background:var(--accent); transition:width .3s; }
+  .bar.low > i { background:#e8590c; }
+  .log { font-size:12.8px; color:var(--ink2); margin-top:10px; }
+  .log div { padding:6px 0; border-bottom:1px dashed #eceff4; display:flex; gap:8px; }
+  .log span.t { color:#98a1b0; flex:0 0 62px; }
+  .mail { background:#fff; border:1px solid #e0e5ee; border-radius:10px; padding:13px 15px;
+          font-size:13px; line-height:1.72; white-space:pre-wrap; word-break:break-word; margin-top:10px; }
+  .stmt { background:#fff; border:1px solid #e0e5ee; border-radius:10px; padding:18px 16px; font-size:12.8px; margin-top:14px; }
+  .stmt h4 { margin:0 0 2px; font-size:16.5px; }
+  .stmt .sm { color:#98a1b0; font-size:11.8px; margin-bottom:12px; }
+  .stmt h5 { margin:14px 0 5px; font-size:13px; }
+  .stmt table { width:100%; border-collapse:collapse; margin:4px 0; font-size:12.3px; }
+  .stmt th, .stmt td { border:1px solid #e6e9ef; padding:6px 8px; text-align:left; }
+  .stmt th { background:#f6f8fb; font-weight:600; }
+  .stmt .n { text-align:right; }
+  .stmt .tot td { background:#f8fafd; font-weight:600; }
+  .muted { color:#98a1b0; }
+  .next a.btn2 { display:inline-block; margin:8px 8px 0 0; padding:11px 16px; border-radius:9px;
+                 text-decoration:none; font-size:14.5px; }
+  .next a.p { background:var(--accent); color:#fff; }
+  .next a.g { background:#f2f5fa; color:var(--ink); border:1px solid #dde3ec; }
+  .foot { color:#98a1b0; font-size:12px; margin-top:22px; text-align:center; }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="brand" href="index.html">实名核验 API<span>经授权通道</span></a>
+    <span class="tagdemo">演示页 · 不联网</span>
+  </div>
+</header>
+
+<div class="wrap">
+  <h1>亲手走一遍：从核验到账单</h1>
+  <p class="sub">下面四步就是客户真实会看到的流程。点几下就明白，不用注册、不用装东西。</p>
+  <div class="demo-note">
+    <b>这是演示，全程不联网、不保存、不发送。</b>页面里的姓名和证件号都是公开示例，<b>请别填真实信息</b>。真实接入时，数据只在你我方服务器之间流动。
+  </div>
+
+  <!-- 1 -->
+  <div class="step">
+    <h3 class="step-h"><span class="step-n">1</span>调一次核验</h3>
+    <p class="step-p">接进来就一个端点 <code>POST /v1/realname</code>，一个请求头 <code>X-API-Key</code>。三个按钮模拟三种真实结果，注意看<b>扣不扣钱</b>。</p>
+    <div class="field">
+      <label>姓名<input id="nm" value="张三" autocomplete="off"></label>
+      <label>身份证号<input id="idn" value="11010519491231002X" autocomplete="off"></label>
+    </div>
+    <div class="row">
+      <button class="b primary" id="btnOk">发起核验（一致）</button>
+      <button class="b ghost" id="btnNo">发起核验（不一致）</button>
+      <button class="b warnb" id="btnBad">模拟照片不合格</button>
+    </div>
+    <div id="res"></div>
+    <div class="log" id="log"></div>
+  </div>
+
+  <!-- 2 -->
+  <div class="step">
+    <h3 class="step-h"><span class="step-n">2</span>看余额怎么掉、什么时候自动提醒</h3>
+    <p class="step-p">每完成一次核验扣 0.14 元。余额低于「开户额 20%」时，系统自己给客户发提醒邮件——下面这封就是真实发出去的样子。</p>
+    <div style="display:flex;align-items:baseline;gap:9px;flex-wrap:wrap">
+      <span class="big" id="bal">￥5.00</span>
+      <span class="muted" style="font-size:12.5px">预警线 ￥1.00 · 单价 ￥0.14/次</span>
+    </div>
+    <div class="bar" id="bar"><i style="width:100%"></i></div>
+    <div class="row">
+      <button class="b ghost" id="btn10">连续调用 10 次</button>
+      <button class="b ghost" id="btnReset">重置演示</button>
+    </div>
+    <div id="mailbox"></div>
+  </div>
+
+  <!-- 3 -->
+  <div class="step">
+    <h3 class="step-h"><span class="step-n">3</span>导出月度对账单</h3>
+    <p class="step-p">月底一条命令出 PDF，直接发客户。客户版没有成本毛利，内部版才带。下面是真实对账单的格式。</p>
+    <div class="row"><button class="b primary" id="btnStmt">生成本月对账单（预览）</button></div>
+    <div id="stmtBox"></div>
+  </div>
+
+  <!-- 4 -->
+  <div class="step next">
+    <h3 class="step-h"><span class="step-n">4</span>试完了，下一步</h3>
+    <p class="step-p">真实接入给 100 次免费试用，报错不计费，30 分钟能跑通。</p>
+    <a class="btn2 p" href="trial.html">申请免费试用 100 次</a>
+    <a class="btn2 g" href="docs.html">看接入文档</a>
+    <a class="btn2 g" href="pricing.html">看价格</a>
+    <p class="muted" style="font-size:12.5px;margin-top:12px">真实接口不保存身份证号和照片，只记「时间 + 结果 + 金额 + 请求号」。</p>
+  </div>
+
+  <div class="foot">本页为产品演示，数据全部为模拟。工作日 9:00–18:00，2 小时内响应。</div>
+</div>
+
+<script>
+(function () {
+  var PRICE = 140, START = 5000, THRESHOLD = 1000;
+  var bal = START, calls = 0, billed = 0, unbilled = 0, recharged = START, mailSent = false, logs = [];
+  var $ = function (id) { return document.getElementById(id); };
+  var yuan = function (m) { return '￥' + (m / 1000).toFixed(2); };
+  var now = function () {
+    var d = new Date();
+    return ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)+':'+('0'+d.getSeconds()).slice(-2);
+  };
+  var rid = function () { return 'r_' + Math.random().toString(16).slice(2, 14); };
+
+  function drawBal() {
+    $('bal').textContent = yuan(bal);
+    var bar = $('bar');
+    bar.firstChild.style.width = Math.max(0, Math.min(100, bal / START * 100)) + '%';
+    bar.className = 'bar' + (bal < THRESHOLD ? ' low' : '');
+  }
+  function pushLog(text) {
+    logs.unshift({ t: now(), text: text });
+    if (logs.length > 5) logs.pop();
+    $('log').innerHTML = logs.map(function (l) {
+      return '<div><span class="t">' + l.t + '</span><span>' + l.text + '</span></div>';
+    }).join('');
+  }
+  function finish(kind) {
+    calls++;
+    if (kind === 'bad') {
+      unbilled++;
+      $('res').innerHTML = '<div class="panel warn"><div class="kv">' +
+        '<b>结果</b><span>照片不合格（IMAGE_INVALID）</span>' +
+        '<b>本次扣费</b><span><b>￥0.00</b>　不计费</span>' +
+        '<b>请求号</b><span class="muted">' + rid() + '</span>' +
+        '<b>说明</b><span>照片太糊、翻拍、遮挡都会走到这里。这类失败我们不收钱。</span></div></div>';
+      pushLog('照片不合格 · 扣 ￥0.00');
+    } else if (kind === 'no') {
+      billed++; bal -= PRICE;
+      $('res').innerHTML = '<div class="panel no"><div class="kv">' +
+        '<b>结果</b><span>不一致（NO_MATCH）</span>' +
+        '<b>耗时</b><span>' + (2.0 + Math.random()).toFixed(2) + ' 秒</span>' +
+        '<b>本次扣费</b><span>￥0.14（核验完成即计费）</span>' +
+        '<b>请求号</b><span class="muted">' + rid() + '</span></div></div>';
+      pushLog('不一致 · 扣 ￥0.14');
+    } else {
+      billed++; bal -= PRICE;
+      $('res').innerHTML = '<div class="panel ok"><div class="kv">' +
+        '<b>结果</b><span>一致（OK）</span>' +
+        '<b>耗时</b><span>' + (0.5 + Math.random() * 0.4).toFixed(2) + ' 秒</span>' +
+        '<b>本次扣费</b><span>￥0.14</span>' +
+        '<b>请求号</b><span class="muted">' + rid() + '</span></div></div>';
+      pushLog('一致 · 扣 ￥0.14');
+    }
+    drawBal(); maybeMail();
+  }
+  function maybeMail() {
+    if (mailSent || bal >= THRESHOLD) return;
+    mailSent = true;
+    $('mailbox').innerHTML = '<div class="panel warn" style="margin-top:14px">' +
+      '<b>余额低于预警线，系统已自动给客户发邮件</b>' +
+      '<p style="margin:6px 0 8px;font-size:13px">不用人工盯：扣完这一笔，系统发现余额不足就自动发。同一客户 24 小时只发一封，充值回到预警线以上会自动复位。</p>' +
+      '<div class="mail">发件人：恒永亿科技-实名核验\n' +
+      '主题：【余额提醒】账户 acct_1a2b3c4d5e 余额 ' + yuan(bal) + '，请及时充值\n\n' +
+      '客户，您好：\n\n' +
+      '您的实名核验接口账户余额已低于预警阈值，提醒您及时充值，避免影响线上调用。\n\n' +
+      '账户编号：acct_1a2b3c4d5e\n' +
+      '当前余额：' + yuan(bal) + '\n' +
+      '预警阈值：' + yuan(THRESHOLD) + '（开户预存金额的 20%）\n' +
+      '按当前单价 ￥0.14/次 估算，约可再用 ' + Math.max(0, Math.floor(bal / PRICE)) + ' 次。\n\n' +
+      '充值方式：联系我方对接人转账，到账后由人工入账。\n' +
+      '—— 恒永亿科技 · 实名核验服务\n' +
+      '工作日 9:00–18:00，2 小时内响应</div></div>';
+  }
+  function drawStmt() {
+    var consumed = billed * PRICE;
+    $('stmtBox').innerHTML = '<div class="stmt">' +
+      '<h4>实名核验接口 · 月度对账单</h4>' +
+      '<div class="sm">账期 ' + new Date().toISOString().slice(0, 7) + '　·　账户 acct_1a2b3c4d5e</div>' +
+      '<h5>一、金额</h5><table>' +
+      '<tr><th>项目</th><th class="n">金额</th></tr>' +
+      '<tr><td>期初余额</td><td class="n">' + yuan(recharged) + '</td></tr>' +
+      '<tr><td>本期充值</td><td class="n">￥0.00</td></tr>' +
+      '<tr><td>本期消耗</td><td class="n">' + yuan(consumed) + '</td></tr>' +
+      '<tr class="tot"><td>期末余额</td><td class="n">' + yuan(bal) + '</td></tr></table>' +
+      '<h5>二、调用量</h5><table>' +
+      '<tr><th>项目</th><th class="n">数量</th></tr>' +
+      '<tr><td>总调用次数</td><td class="n">' + calls + '</td></tr>' +
+      '<tr><td>计费次数（一致 + 不一致）</td><td class="n">' + billed + '</td></tr>' +
+      '<tr><td>不计费次数（照片不合格 / 报错）</td><td class="n">' + unbilled + '</td></tr></table>' +
+      '<h5>三、本期充值记录</h5><table>' +
+      '<tr><th>时间</th><th class="n">金额</th><th>备注</th></tr>' +
+      '<tr><td>' + new Date().toLocaleDateString('zh-CN') + '</td><td class="n">' + yuan(recharged) + '</td><td>开户预存</td></tr></table>' +
+      '<p class="muted" style="font-size:11.8px;margin:8px 0 0">真实系统导出的是 PDF；客户版不含成本毛利，内部版另有一节「毛利」供我们核账。对账单里不含身份证号、照片。</p></div>';
+  }
+
+  $('btnOk').onclick = function () { finish('ok'); };
+  $('btnNo').onclick = function () { finish('no'); };
+  $('btnBad').onclick = function () { finish('bad'); };
+  $('btn10').onclick = function () {
+    var n = 0;
+    for (var i = 0; i < 10; i++) {
+      if (bal < PRICE) { pushLog('余额不足，调用被拒（不计费）'); break; }
+      calls++; billed++; bal -= PRICE; n++;
+    }
+    pushLog('连续完成 ' + n + ' 次 · 共扣 ' + yuan(n * PRICE));
+    drawBal(); maybeMail();
+  };
+  $('btnReset').onclick = function () {
+    bal = START; calls = 0; billed = 0; unbilled = 0; mailSent = false; logs = [];
+    $('res').innerHTML = ''; $('log').innerHTML = ''; $('mailbox').innerHTML = ''; $('stmtBox').innerHTML = '';
+    drawBal();
+  };
+  $('btnStmt').onclick = drawStmt;
+  drawBal();
+})();
+</script>
+</body>
+</html>
